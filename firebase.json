@@ -1,0 +1,20 @@
+{
+  "hosting": {
+    "public": "dist/etoan-ventures-frontend-external/browser",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}
