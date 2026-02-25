@@ -1,1 +1,531 @@
 /* You can add global styles to this file, and also import other style files */
+html, body {
+  height: 100vh;
+  margin: 0;
+}
+
+body {
+  font-family: ui-sans-serif, system-ui, -apple-system;
+  background: radial-gradient(1200px 700px at 15% 10%, #1a1a2e 0%, transparent 60%),
+              radial-gradient(900px 600px at 85% 20%, #2b1b3a 0%, transparent 55%),
+              linear-gradient(135deg, #0b0b10 0%, #121225 55%, #0a0a12 100%);
+  background-attachment: fixed;
+  max-width: 960px;
+  margin:auto;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  color: gray;
+  padding: 40px 20px 40px 20px;
+
+
+}
+
+.company-logo {
+  max-width: 75vw;
+  width: 100%;
+  justify-content: center;
+  display: flex;
+  margin: auto;
+
+  @media (max-width:1024px){
+    width: 100vw;
+    justify-content: center;
+    display: flex;
+    margin: auto;
+    max-width: 90vw;
+  }
+}
+
+.company-address {
+    color: #8c52ff;
+    font-weight: 600;
+    text-align: center;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    // border-bottom: 1px solid black;
+}
+
+.btn-row {
+        display: grid;
+        gap: 12px;
+        margin-top: 10px;
+      }
+
+      .btn {
+        width: 100%;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        border-radius: 14px;
+        padding: 14px 14px;
+        font-size: 15px;
+        font-weight: 700;
+        letter-spacing: 0.01em;
+        cursor: pointer;
+        transition:
+          transform 120ms ease,
+          box-shadow 120ms ease,
+          border-color 120ms ease;
+        background: rgba(255, 255, 255, 0.06);
+        color: var(--text);
+      }
+
+      .btn:hover {
+        transform: translateY(-1px);
+        border-color: rgba(255, 255, 255, 0.22);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+      }
+
+      .btn:active {
+        transform: translateY(0px);
+      }
+
+      .btn.primary {
+        border: 0;
+        background: linear-gradient(
+          135deg,
+          #3b0764 0%,
+          #5b21b6 45%,
+          #7c3aed 100%
+        );
+        box-shadow: 0 16px 40px rgba(124, 58, 237, 0.18);
+      }
+
+      .footer {
+        margin-top: 14px;
+        text-align: center;
+        color: rgba(255, 255, 255, 0.45);
+        font-size: 12px;
+      }
+
+      /* =========================================================
+   Core component styles to match your existing dark/glass vibe
+   Drop this below your current CSS (or into a components.css)
+   ========================================================= */
+
+/* ---------- Theme tokens ---------- */
+:root{
+  --text: gray;
+  --muted: rgba(255,255,255,0.58);
+  --faint: rgba(255,255,255,0.36);
+
+  --panel: rgba(255,255,255,0.06);
+  --panel-2: rgba(255,255,255,0.08);
+
+  --border: rgba(255,255,255,0.14);
+  --border-strong: rgba(255,255,255,0.22);
+
+  --shadow: 0 18px 44px rgba(0,0,0,0.38);
+  --shadow-soft: 0 12px 30px rgba(0,0,0,0.32);
+
+  --ring: rgba(124,58,237,0.45); /* purple glow */
+  --ring-2: rgba(59,7,100,0.35);
+
+  --radius: 16px;
+  --radius-sm: 12px;
+
+  --danger: #ef4444;
+  --danger-2: #b91c1c;
+
+  --success: #22c55e;
+  --success-2: #16a34a;
+
+  --accent-1: #3b0764;
+  --accent-2: #5b21b6;
+  --accent-3: #7c3aed;
+}
+
+* { box-sizing: border-box; }
+
+/* helpful for keyboard users */
+:focus-visible{
+  outline: none;
+  box-shadow: 0 0 0 4px var(--ring), 0 0 0 10px var(--ring-2);
+  border-color: rgba(124,58,237,0.55) !important;
+}
+
+/* ---------- Layout containers ---------- */
+.container{
+  width: 100%;
+  margin: 0 auto;
+  padding: 18px;
+}
+
+.card{
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 30px;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.card.compact{ padding: 14px; }
+
+.section{
+  margin-top: 14px;
+  padding: 14px;
+  border-radius: var(--radius);
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.04);
+}
+
+.stack{
+  display: grid;
+  gap: 12px;
+}
+
+.row{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.grid-2{
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+@media (max-width: 720px){
+  .grid-2{ grid-template-columns: 1fr; }
+}
+
+/* ---------- Typography helpers ---------- */
+.h1, .h2, .h3{
+  margin: 0;
+  color: var(--text);
+  letter-spacing: 0.01em;
+}
+.h1{ font-size: 20px; font-weight: 800; }
+.h2{ font-size: 16px; font-weight: 800; }
+.h3{ font-size: 14px; font-weight: 800; }
+
+.muted{ color: var(--muted); }
+.help{ color: var(--faint); font-size: 12px; }
+
+/* ---------- Form fields ---------- */
+.field{
+  display: grid;
+  gap: 8px;
+}
+
+.label{
+  color: rgba(255,255,255,0.66);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.control{
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 12px 12px;
+  font-size: 14px;
+  color: var(--text);
+  background: rgba(255,255,255,0.05);
+  transition: border-color 120ms ease, box-shadow 120ms ease, transform 120ms ease;
+}
+
+.control::placeholder{
+  color: rgba(255,255,255,0.38);
+}
+
+.control:hover{
+  border-color: rgba(255,255,255,0.20);
+  box-shadow: 0 10px 26px rgba(0,0,0,0.22);
+}
+
+.control:focus{
+  outline: none;
+  border-color: rgba(124,58,237,0.55);
+  box-shadow: 0 0 0 4px rgba(124,58,237,0.18);
+}
+
+.control[disabled],
+.control:disabled{
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+textarea.control{
+  min-height: 110px;
+  resize: vertical;
+}
+
+/* input sizes */
+.control.sm{ padding: 10px 10px; border-radius: 12px; font-size: 13px; }
+.control.lg{ padding: 14px 14px; border-radius: 16px; font-size: 15px; }
+
+/* invalid state (add .invalid to .field or directly to control) */
+.field.invalid .control,
+.control.invalid{
+  border-color: rgba(239,68,68,0.70);
+  box-shadow: 0 0 0 4px rgba(239,68,68,0.14);
+}
+.error{
+  color: rgba(239,68,68,0.85);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* ---------- Select / Dropdown ---------- */
+select.control{
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  padding-right: 40px;
+  background-image:
+    linear-gradient(45deg, transparent 50%, rgba(255,255,255,0.65) 50%),
+    linear-gradient(135deg, rgba(255,255,255,0.65) 50%, transparent 50%),
+    linear-gradient(to right, transparent, transparent);
+  background-position:
+    calc(100% - 22px) calc(50% - 2px),
+    calc(100% - 16px) calc(50% - 2px),
+    calc(100% - 42px) 50%;
+  background-size:
+    6px 6px,
+    6px 6px,
+    1px 22px;
+  background-repeat: no-repeat;
+}
+
+select.control option{
+  background: #0b0b10;
+  color: rgba(255,255,255,0.88);
+}
+
+/* ---------- Buttons (extends your .btn) ---------- */
+/* keep your existing .btn / .btn.primary as-is, and add variants below */
+.btn.secondary{
+  background: rgba(255,255,255,0.06);
+  color: var(--text);
+}
+
+.btn.save{
+  border: 0;
+  background: linear-gradient(135deg, var(--accent-1) 0%, var(--accent-2) 45%, var(--accent-3) 100%);
+  box-shadow: 0 16px 40px rgba(124, 58, 237, 0.18);
+}
+
+.btn.remove{
+  border: 0;
+  background: linear-gradient(135deg, #450a0a 0%, var(--danger-2) 55%, var(--danger) 100%);
+  box-shadow: 0 16px 40px rgba(239,68,68,0.16);
+}
+
+.btn.ghost{
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.14);
+  color: rgba(255,255,255,0.74);
+}
+
+.btn:disabled{
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* small icon button */
+.icon-btn{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.05);
+  color: var(--text);
+  cursor: pointer;
+  transition: transform 120ms ease, border-color 120ms ease, box-shadow 120ms ease;
+}
+.icon-btn:hover{
+  transform: translateY(-1px);
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-soft);
+}
+
+/* ---------- Chips / Pills ---------- */
+.chip{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.05);
+  color: rgba(255,255,255,0.78);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* ---------- Table ---------- */
+.table-wrap{
+  overflow: auto;
+  border-radius: var(--radius);
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.03);
+}
+
+table{
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 640px;
+}
+
+th, td{
+  padding: 12px 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.78);
+  text-align: left;
+  font-size: 13px;
+}
+
+th{
+  position: sticky;
+  top: 0;
+  background: rgba(10,10,18,0.75);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: rgba(255,255,255,0.86);
+  font-weight: 800;
+  letter-spacing: 0.01em;
+}
+
+tr:hover td{
+  background: rgba(255,255,255,0.03);
+}
+
+/* ---------- Badges / Status ---------- */
+.badge{
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.05);
+  color: rgba(255,255,255,0.78);
+}
+.badge.success{
+  border-color: rgba(34,197,94,0.25);
+  background: rgba(34,197,94,0.10);
+  color: rgba(34,197,94,0.95);
+}
+.badge.danger{
+  border-color: rgba(239,68,68,0.25);
+  background: rgba(239,68,68,0.10);
+  color: rgba(239,68,68,0.95);
+}
+.badge.warn{
+  border-color: rgba(245,158,11,0.25);
+  background: rgba(245,158,11,0.10);
+  color: rgba(245,158,11,0.95);
+}
+
+/* ---------- Divider ---------- */
+.divider{
+  height: 1px;
+  background: rgba(255,255,255,0.10);
+  margin: 14px 0;
+}
+
+/* ---------- Toast / Alert ---------- */
+.alert{
+  border-radius: var(--radius);
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.05);
+  padding: 12px 12px;
+  color: rgba(255,255,255,0.80);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.22);
+}
+.alert.success{
+  border-color: rgba(34,197,94,0.22);
+  background: rgba(34,197,94,0.08);
+}
+.alert.danger{
+  border-color: rgba(239,68,68,0.22);
+  background: rgba(239,68,68,0.08);
+}
+
+/* ---------- Modal / Dialog shell ---------- */
+.modal-backdrop{
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  display: grid;
+  place-items: center;
+  padding: 18px;
+}
+
+.modal{
+  width: min(720px, 100%);
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(10,10,18,0.65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 18px 50px rgba(0,0,0,0.55);
+  padding: 16px;
+}
+
+.modal-header{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.modal-title{
+  margin: 0;
+  color: rgba(255,255,255,0.90);
+  font-size: 16px;
+  font-weight: 900;
+}
+
+/* ---------- Utility ---------- */
+.spacer-6{ height: 6px; }
+.spacer-10{ height: 10px; }
+.hidden{ display: none !important; }
+
+$spacings: 5, 10, 15, 20, 25, 30, 40;
+
+@each $value in $spacings {
+    .mb-#{$value} {
+        margin-bottom: #{$value}px;
+    }
+
+    .mr-#{$value} {
+        margin-right: #{$value}px;
+    }
+
+    .mt-#{$value} {
+        margin-top: #{$value}px;
+    }
+
+    .ml-#{$value} {
+        margin-left: #{$value}px;
+    }
+
+
+}
+
+
+.flex-row {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+    align-items: center;
+    justify-content: center;
+}
+.flex-column{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+      
