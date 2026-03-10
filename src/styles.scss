@@ -13,7 +13,7 @@ body {
   max-width: 960px;
   margin:auto;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
-  color: gray;
+  color: white;
   padding: 40px 20px 40px 20px;
 
 
@@ -63,7 +63,7 @@ body {
           box-shadow 120ms ease,
           border-color 120ms ease;
         background: rgba(255, 255, 255, 0.06);
-        color: var(--text);
+        color: white;
       }
 
       .btn:hover {
@@ -148,7 +148,7 @@ body {
 }
 
 .card{
-  background: var(--panel);
+  background: var(--panel-2);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 30px;
@@ -191,7 +191,7 @@ body {
 /* ---------- Typography helpers ---------- */
 .h1, .h2, .h3{
   margin: 0;
-  color: var(--text);
+  color: white;
   letter-spacing: 0.01em;
 }
 .h1{ font-size: 20px; font-weight: 800; }
@@ -221,7 +221,7 @@ body {
   border-radius: 14px;
   padding: 12px 12px;
   font-size: 14px;
-  color: var(--text);
+  color: white;
   background: rgba(255,255,255,0.05);
   transition: border-color 120ms ease, box-shadow 120ms ease, transform 120ms ease;
 }
@@ -298,7 +298,7 @@ select.control option{
 /* keep your existing .btn / .btn.primary as-is, and add variants below */
 .btn.secondary{
   background: rgba(255,255,255,0.06);
-  color: var(--text);
+  color: white;
 }
 
 .btn.save{
@@ -336,7 +336,7 @@ select.control option{
   border-radius: 14px;
   border: 1px solid var(--border);
   background: rgba(255,255,255,0.05);
-  color: var(--text);
+  color: white;
   cursor: pointer;
   transition: transform 120ms ease, border-color 120ms ease, box-shadow 120ms ease;
 }
