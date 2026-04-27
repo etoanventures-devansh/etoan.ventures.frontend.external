@@ -1,0 +1,33 @@
+<div class="login-container">
+  <p-card class="login-card">
+
+    <h2 class="title">Welcome Back</h2>
+    <p class="subtitle">Enter your credentials to manage your workspace.</p>
+
+    <div class="field">
+      <p-floatLabel>
+        <input pInputText id="email"  />
+        <label for="email">Email</label>
+      </p-floatLabel>
+    </div>
+
+    <div class="field">
+      <p-floatLabel>
+        <p-password
+          [feedback]="false"
+          toggleMask="true"
+          inputId="password">
+        </p-password>
+        <label for="password">Password</label>
+      </p-floatLabel>
+    </div>
+
+    <button
+      pButton
+      label="Login"
+      class="login-btn"
+      >
+    </button>
+
+  </p-card>
+</div>

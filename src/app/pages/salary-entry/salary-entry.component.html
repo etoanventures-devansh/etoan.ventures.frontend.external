@@ -1,0 +1,73 @@
+<div class="page-header">
+  <h2>Salary Entry</h2>
+
+  <div>
+    <p-button label="Cancel" severity="secondary"></p-button>
+    <p-button label="Preview Payslip" icon="pi pi-file-pdf" severity="secondary"></p-button>
+    <p-button label="Save Record" icon="pi pi-save"></p-button>
+  </div>
+</div>
+
+<div class="salary-grid">
+  <p-card header="Employee Details">
+    <label>Employee Name</label>
+    <p-select [options]="[]" optionLabel="name"></p-select>
+
+    <label>Designation</label>
+    <input pInputText />
+
+    <label>NRIC/FIN</label>
+    <input pInputText />
+
+    <label>Payslip Period</label>
+    <p-select [options]="[]"></p-select>
+
+    <label>Date of Payment</label>
+    <p-datepicker></p-datepicker>
+
+    <label>Mode of Payment</label>
+    <p-select [options]="[]"></p-select>
+  </p-card>
+
+  <p-card header="Earnings & Work">
+    <label>Basic Pay</label>
+    <input pInputText type="number" />
+
+    <label>Days Worked</label>
+    <input pInputText type="number" />
+
+    <h4>Overtime Details</h4>
+
+    <label>OT Rate</label>
+    <input pInputText type="number" />
+
+    <label>OT Hours</label>
+    <input pInputText type="number" />
+
+    <h4>Allowances</h4>
+
+    <label>Medical</label>
+    <input pInputText type="number" />
+
+    <label>Transport</label>
+    <input pInputText type="number" />
+  </p-card>
+
+  <p-card header="Deductions & Summary">
+    <label>Cash Advance</label>
+    <input pInputText type="number" />
+
+    <label>Fines</label>
+    <input pInputText type="number" />
+
+    <hr />
+
+    <p>Gross Salary: <strong>$6,300.00</strong></p>
+    <p>Total Deductions: <strong>$0.00</strong></p>
+
+    <div class="summary">
+      <small>Final Net Salary Payable</small>
+      <h1>$6,300.25</h1>
+    </div>
+  </p-card>
+</div>

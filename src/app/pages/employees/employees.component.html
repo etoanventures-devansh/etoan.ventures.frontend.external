@@ -1,0 +1,51 @@
+<div class="page-header">
+  <div>
+    <h1>Employees</h1>
+    <p>Manage internal staff directory and project allocations.</p>
+  </div>
+
+  <p-button label="Add Employee" icon="pi pi-user-plus"></p-button>
+</div>
+
+<div class="toolbar">
+  <input pInputText placeholder="Search by name, email, or employee ID..." />
+  <p-select [options]="[]" placeholder="All Statuses"></p-select>
+  <p-select [options]="[]" placeholder="All Projects"></p-select>
+</div>
+
+<p-table [value]="[]" [paginator]="true" [rows]="5">
+  <ng-template pTemplate="header">
+    <tr>
+      <th>Employee Name</th>
+      <th>ID</th>
+      <th>Phone</th>
+      <th>Job Title</th>
+      <th>Current Project</th>
+      <th>Status</th>
+      <th>Date Hired</th>
+      <th>Actions</th>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="body" let-emp>
+    <tr>
+      <td>
+        <strong>{{ emp.name }}</strong><br />
+        <small>{{ emp.email }}</small>
+      </td>
+      <td>{{ emp.id }}</td>
+      <td>{{ emp.phone }}</td>
+      <td>{{ emp.jobTitle }}</td>
+      <td>{{ emp.project }}</td>
+      <td>
+        <p-tag [value]="emp.status" severity="success"></p-tag>
+      </td>
+      <td>{{ emp.dateHired }}</td>
+      <td>
+        <p-button icon="pi pi-eye" text></p-button>
+        <p-button icon="pi pi-pencil" text></p-button>
+        <p-button icon="pi pi-user" text></p-button>
+      </td>
+    </tr>
+  </ng-template>
+</p-table>

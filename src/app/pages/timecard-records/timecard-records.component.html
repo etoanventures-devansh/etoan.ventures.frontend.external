@@ -1,0 +1,83 @@
+<div class="page-header">
+  <h2>Records</h2>
+  <p-tag value="3 Total"></p-tag>
+</div>
+
+<span class="p-input-icon-left full">
+  <i class="pi pi-search"></i>
+  <input pInputText placeholder="Search worker or project..." />
+</span>
+
+<div class="filters">
+  <p-button label="Date Range" icon="pi pi-calendar" outlined></p-button>
+  <p-button label="Worker" icon="pi pi-user" outlined></p-button>
+  <p-button label="Project" icon="pi pi-building" outlined></p-button>
+</div>
+
+<p-card *ngFor="let record of records">
+  <div class="record-header">
+    <div>
+      <h3>{{ record.worker }}</h3>
+      <small>ID: {{ record.employeeId }}</small>
+    </div>
+
+    <div>
+      <p-button icon="pi pi-pencil" text (click)="editVisible = true"></p-button>
+      <p-button icon="pi pi-trash" text severity="danger"></p-button>
+    </div>
+  </div>
+
+  <div class="record-grid">
+    <div>
+      <small>Project Site</small>
+      <strong>{{ record.project }}</strong>
+    </div>
+
+    <div>
+      <small>Date</small>
+      <strong>{{ record.date }}</strong>
+    </div>
+
+    <div>
+      <small>Start — End</small>
+      <strong>{{ record.time }}</strong>
+    </div>
+
+    <div>
+      <small>Break</small>
+      <strong>{{ record.break }} min</strong>
+    </div>
+
+    <p-tag [value]="record.hours + ' hours'"></p-tag>
+  </div>
+</p-card>
+
+<p-dialog header="Edit Timecard" [(visible)]="editVisible" [modal]="true" [style]="{ width: '420px' }">
+  <div class="form">
+    <label>Worker Name</label>
+    <input pInputText />
+
+    <label>Project Site</label>
+    <input pInputText />
+
+    <div class="grid">
+      <div>
+        <label>Start Time</label>
+        <input pInputText type="time" />
+      </div>
+
+      <div>
+        <label>End Time</label>
+        <input pInputText type="time" />
+      </div>
+    </div>
+
+    <label>Break Minutes</label>
+    <input pInputText type="number" />
+  </div>
+
+  <ng-template pTemplate="footer">
+    <p-button label="Cancel" severity="secondary" (click)="editVisible = false"></p-button>
+    <p-button label="Save Changes" icon="pi pi-save"></p-button>
+  </ng-template>
+</p-dialog>

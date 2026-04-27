@@ -1,0 +1,15 @@
+.company-logo {
+  max-width: 75vw;
+  width: 100%;
+  justify-content: center;
+  display: flex;
+  margin: auto;
+
+  @media (max-width:1024px){
+    width: 100vw;
+    justify-content: center;
+    display: flex;
+    margin: auto;
+    max-width: 90vw;
+  }
+}

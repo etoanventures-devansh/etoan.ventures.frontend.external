@@ -1,0 +1,71 @@
+<p-card header="Daily Timecard">
+  <div class="grid">
+    <div>
+      <label>Worker</label>
+      <p-select
+        [options]="[]"
+        optionLabel="name"
+        placeholder="Select worker"
+      ></p-select>
+    </div>
+
+    <div>
+      <label>Employee ID</label>
+      <input pInputText value="EMP-2045" disabled />
+    </div>
+
+    <div>
+      <label>Project Site</label>
+      <p-select
+        [options]="[]"
+        optionLabel="name"
+        placeholder="Select project"
+      ></p-select>
+    </div>
+
+    <div>
+      <label>Date</label>
+      <p-datepicker dateFormat="dd/mm/yy" placeholder="dd/mm/yyyy" [showIcon]="true"></p-datepicker>
+    </div>
+
+    <div>
+      <label>Start Time</label>
+      <p-date-picker [timeOnly]="true" hourFormat="24" placeholder="Enter start time." [showIcon]="true">
+      </p-date-picker>
+    </div>
+
+    <div>
+      <label>End Time</label>
+      <p-date-picker [timeOnly]="true" hourFormat="24" placeholder="Enter end time." [showIcon]="true">
+      </p-date-picker>
+    </div>
+
+  </div>
+
+  <div class="checks">
+    <p-checkbox binary="true" inputId="lunch"></p-checkbox>
+    <label for="lunch">Worked through lunch</label>
+  </div>
+
+  <div class="checks">
+    <p-checkbox binary="true" inputId="break"></p-checkbox>
+    <label for="break">Took break</label>
+  </div>
+
+  <label>Break Duration</label>
+  <input pInputText type="number" placeholder="30" />
+
+  <div class="summary">
+    <small>Estimated Work Hours</small>
+    <h1>08:00</h1>
+  </div>
+
+  <div class="actions">
+    <p-button
+      label="Clear"
+      severity="secondary"
+      icon="pi pi-refresh"
+    ></p-button>
+    <p-button label="Save Log" icon="pi pi-save"></p-button>
+  </div>
+</p-card>

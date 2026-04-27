@@ -1,17 +1,10 @@
-<main class="shell">
-  <img
-    class="company-logo mb-40"
-    src="../assets/images/Etoan_Ventures_No_Background.png"
-  />
-  <section class="card mb-40">
-    <h1 class="h1">Welcome to Etoan Ventures Portal</h1>
-    <p>Select your login profile to continue.</p>
-
-    <div class="btn-row">
-      <button class="btn primary" type="button">Worker Login</button>
-      <button class="btn" type="button">Admin Login</button>
-    </div>
-    <div class="footer">© <span id="year"></span> Etoan Ventures</div>
-  </section>
+<app-header class="mb-40 mt-20"></app-header>
+<main>
+    <router-outlet></router-outlet>
 </main>
-
+<!--Spinner-->
+<p-blockui [blocked]="sandbox.loading$| async">
+  <div class="full-page-spinner">
+    <p-progressSpinner></p-progressSpinner>
+  </div>
+</p-blockui>
