@@ -204,7 +204,7 @@ export class TimecardEntryComponent implements OnInit {
       overTimeHours: formValues.overTimeHours,
       totalHours: formValues.totalWorkHours,
       identifierNumber: formValues.worker.code,
-      date: formValues.date,
+      date: this.formatDateOnly(formValues.date),
       refEntityId: this.refEntityIdList.find((entityId) => entityId.code === formValues.worker.code)?.refEntityId
 
     }
@@ -234,4 +234,12 @@ export class TimecardEntryComponent implements OnInit {
       }
     })
   }
+
+  formatDateOnly(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+
+  return `${year}-${month}-${day}`;
+}
 }

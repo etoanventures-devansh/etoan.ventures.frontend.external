@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
-import { DatePipe, NgFor, NgIf } from '@angular/common';
+import { MessageModule } from 'primeng/message';
+import { CommonModule, DatePipe, NgFor, NgIf } from '@angular/common';
 import { EtoanSandboxService } from '../../store/sandbox/etoan-sandbox';
 import { EmployeeDetails } from '../../models/etoan-models';
 
@@ -32,9 +33,9 @@ interface TimecardView {
     InputTextModule,
     ButtonModule,
     TagModule,
-    NgFor,
-    NgIf,
-    DatePipe
+    MessageModule,
+    DatePipe,
+    CommonModule
   ],
   templateUrl: './view-timecard.component.html',
   styleUrl: './view-timecard.component.scss'
@@ -45,7 +46,7 @@ export class ViewTimecardComponent {
   workerList: EmployeeDetails[] | null = []
 
   searchForm = new FormBuilder().group({
-    searchText: ['']
+    searchText: [{ value: '', disabled: false }, [Validators.required, this.nricLast4Validator()]]
   });
 
   constructor(private sandbox: EtoanSandboxService) {}
@@ -53,37 +54,11 @@ export class ViewTimecardComponent {
   ngOnInit(): void {
     this.sandbox.getEmployeeDetails();
     this.initSubscriptions()
-    // Replace this with Supabase data later
-    this.timecards = [
-      {
-        id: 1,
-        date: '2026-05-04',
-        employeeName: 'Rajangam Ramar',
-        identifierNumber: 'G1234567X',
-        projectSite: 'Tampines Site A',
-        startTime: '2026-05-04T08:00:00',
-        endTime: '2026-05-04T17:00:00',
-        totalHours: 8,
-        normalHours: 8,
-        overTimeHours: 0,
-        totalBreakHours: 1,
-        lunchTimeWork: false
-      },
-      {
-        id: 1,
-        date: '2026-05-04',
-        employeeName: 'Rajangam Ramar',
-        identifierNumber: 'G1234567X',
-        projectSite: 'Tampines Site A',
-        startTime: '2026-05-04T08:00:00',
-        endTime: '2026-05-04T17:00:00',
-        totalHours: 8,
-        normalHours: 8,
-        overTimeHours: 0,
-        totalBreakHours: 1,
-        lunchTimeWork: false
-      }
-    ];
+   
+  }
+
+  ngOnDestroy(){
+    this.filteredTimecards = [];
   }
 
   initSubscriptions(){
@@ -93,6 +68,8 @@ export class ViewTimecardComponent {
     this.sandbox.previousTimecards$.subscribe((timecards) => {
       this.filteredTimecards = [];
       if(timecards?.length){
+
+        this.searchForm.get('searchText')?.disable()
         timecards.forEach((card) => {
           this.filteredTimecards.push({
             id: card.id,
@@ -115,12 +92,17 @@ export class ViewTimecardComponent {
   }
 
   searchTimecards(): void {
-    const searchText = this.searchForm.value.searchText?.toUpperCase().trim();
+    if(this.searchForm.invalid){
+      this.searchForm.markAllAsTouched();
+      return;
+    }
+    const searchText = this.searchForm.get('searchText')?.value?.toUpperCase().trim();
     const refEntityId = this.workerList?.find((worker) => worker.identifierNumber?.slice(-4) === searchText)?.entityId
-    if(refEntityId) this.sandbox.getPreviousTimecards(refEntityId)
+    this.sandbox.getPreviousTimecards(refEntityId || '')
   }
 
   clearSearch(): void {
+    this.searchForm.get('searchText')?.enable()
     this.searchForm.reset();
     this.filteredTimecards = [];
   }
@@ -130,4 +112,19 @@ export class ViewTimecardComponent {
     if (value.length <= 4) return value;
     return 'X'.repeat(value.length - 4) + value.slice(-4);
   }
+
+  nricLast4Validator(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const value = String(control.value ?? '').toUpperCase().trim();
+
+    if (!value) return null; // let required handle empty value
+
+    const refEntityId = this.workerList?.find((worker) => worker.identifierNumber?.slice(-4) === value)?.entityId
+
+
+    return refEntityId
+      ? null
+      : { nricLast4Mismatch: true };
+  };
+}
 }

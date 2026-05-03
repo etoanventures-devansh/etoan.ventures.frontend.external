@@ -27,7 +27,7 @@ export class EtoanHttpService {
         .from(TABLE_NAMES.TIMECARD_ENTRY)
         .select('*')
         .eq('refEntityId', entityId)
-        .order('created_at', { ascending: false })
+        .order('date', { ascending: false })
         .limit(5),
     );
   }

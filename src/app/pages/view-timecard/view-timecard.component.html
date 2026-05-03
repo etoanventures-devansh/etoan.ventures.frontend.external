@@ -1,4 +1,15 @@
 <p-card>
+  <div class="mb-40">
+    <p-message
+      *ngIf="
+        searchForm.get('searchText')?.invalid &&
+        searchForm.get('searchText')?.touched
+      "
+      severity="error"
+      text="No match found. Enter the correct last 4 characters of NRIC/FIN."
+      icon="pi pi-times-circle"
+    ></p-message>
+  </div>
   <div class="tc-header">
     <div>
       <h2 class="tc-title">
@@ -13,8 +24,14 @@
     <span class="p-input-icon-left search-input">
       <input
         pInputText
+        type="text"
         formControlName="searchText"
         placeholder="Last 4 characters of NRIC/FIN."
+        [ngClass]="{
+          'ng-invalid ng-dirty':
+            searchForm.get('searchText')?.invalid &&
+            searchForm.get('searchText')?.touched,
+        }"
       />
     </span>
 
@@ -38,16 +55,13 @@
 </p-card>
 
 <div class="cards-grid" *ngIf="filteredTimecards.length > 0">
-  <p-card
-    class="timecard-card"
-    *ngFor="let item of filteredTimecards"
-  >
+  <p-card class="timecard-card" *ngFor="let item of filteredTimecards">
     <ng-template pTemplate="header">
       <div class="card-top">
         <div>
           <h3>
             <i class="pi pi-calendar"></i>
-            {{ item.date | date: 'dd MMM yyyy' }}
+            {{ item.date | date: "dd MMM yyyy" }}
           </h3>
           <p>
             <i class="pi pi-map-marker"></i>
@@ -77,13 +91,13 @@
       <div class="info-box">
         <i class="pi pi-clock"></i>
         <small>Start Time</small>
-        <strong>{{ item.startTime | date: 'hh:mm a' }}</strong>
+        <strong>{{ item.startTime | date: "hh:mm a" }}</strong>
       </div>
 
       <div class="info-box">
         <i class="pi pi-clock"></i>
         <small>End Time</small>
-        <strong>{{ item.endTime | date: 'hh:mm a' }}</strong>
+        <strong>{{ item.endTime | date: "hh:mm a" }}</strong>
       </div>
 
       <div class="info-box">
@@ -112,7 +126,7 @@
 
       <div>
         <small>Lunch Worked</small>
-        <h3>{{ item.lunchTimeWork ? 'Yes' : 'No' }}</h3>
+        <h3>{{ item.lunchTimeWork ? "Yes" : "No" }}</h3>
       </div>
     </div>
   </p-card>
@@ -121,5 +135,5 @@
 <div class="empty-state" *ngIf="filteredTimecards.length === 0">
   <i class="pi pi-inbox"></i>
   <h3>No timecards shown</h3>
-  <p>Enter a worker name, ID, or project site and click search.</p>
+  <p>Enter your last 4 characters of NRIC/FIN. For example '468A'</p>
 </div>
