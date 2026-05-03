@@ -1,71 +1,167 @@
-<p-card header="Daily Timecard">
-  <div class="grid">
-    <div>
-      <label>Worker</label>
-      <p-select
-        [options]="[]"
-        optionLabel="name"
-        placeholder="Select worker"
-      ></p-select>
+<div [formGroup]="timecardFormGroup" *ngIf="showPage">
+  <p-card>
+    <h3 class="tc-title">Daily Timecard</h3>
+    <div class="grid mb-20 mt-20">
+      <div class="tc-flex-column">
+        <label class="tc-flex-row mb-5"
+          ><i class="pi pi-user"></i>Worker Name</label
+        >
+        <p-select
+          [options]="workerList"
+          optionLabel="name"
+          placeholder="Select worker"
+          [checkmark]="true"
+          [showClear]="true"
+          formControlName="worker"
+          [ngClass]="{
+            'ng-invalid ng-dirty':
+              timecardFormGroup.get('worker')?.invalid &&
+              timecardFormGroup.get('worker')?.touched,
+          }"
+        ></p-select>
+      </div>
+
+      <div class="tc-flex-column">
+        <label class="tc-flex-row mb-5"
+          ><i class="pi pi-map-marker"></i>Project Site</label
+        >
+        <p-select
+          [options]="projectList"
+          optionLabel="name"
+          placeholder="Select project"
+          [checkmark]="true"
+          [showClear]="true"
+          formControlName="projectSite"
+          [ngClass]="{
+            'ng-invalid ng-dirty':
+              timecardFormGroup.get('projectSite')?.invalid &&
+              timecardFormGroup.get('projectSite')?.touched,
+          }"
+        ></p-select>
+      </div>
+
+      <div class="tc-flex-column">
+        <label>Date</label>
+        <p-datepicker
+          dateFormat="dd/mm/yy"
+          placeholder="dd/mm/yyyy"
+          [showIcon]="true"
+          formControlName="date"
+          [ngClass]="{
+            'ng-invalid ng-dirty':
+              timecardFormGroup.get('date')?.invalid &&
+              timecardFormGroup.get('date')?.touched,
+          }"
+        ></p-datepicker>
+      </div>
+
+      <div class="tc-flex-column">
+        <label>Start Time</label>
+        <p-date-picker
+          [timeOnly]="true"
+          hourFormat="12"
+          stepMinute="30"
+          placeholder="Enter start time."
+          [showIcon]="true"
+          formControlName="startTime"
+          [readonlyInput]="true"
+          icon="pi pi-clock"
+          [ngClass]="{
+            'ng-invalid ng-dirty':
+              timecardFormGroup.get('startTime')?.invalid &&
+              timecardFormGroup.get('startTime')?.touched,
+          }"
+          (onSelect)="calculateTotalHours()"
+        >
+        </p-date-picker>
+      </div>
+
+      <div class="tc-flex-column">
+        <label>End Time</label>
+        <p-date-picker
+          [timeOnly]="true"
+          hourFormat="12"
+          stepMinute="30"
+          placeholder="Enter end time."
+          [showIcon]="true"
+          [readonlyInput]="true"
+          formControlName="endTime"
+          icon="pi pi-clock"
+          [ngClass]="{
+            'ng-invalid ng-dirty':
+              timecardFormGroup.get('endTime')?.invalid &&
+              timecardFormGroup.get('endTime')?.touched,
+          }"
+          (onSelect)="calculateTotalHours()"
+        >
+        </p-date-picker>
+      </div>
     </div>
 
-    <div>
-      <label>Employee ID</label>
-      <input pInputText value="EMP-2045" disabled />
+    <div class="checks mb-10 tc-flex-row">
+      <p-checkbox
+        binary="true"
+        inputId="lunch"
+        formControlName="workedThroughLunch"
+      ></p-checkbox>
+      <label for="lunch">LTW/DTW</label>
     </div>
 
-    <div>
-      <label>Project Site</label>
-      <p-select
-        [options]="[]"
-        optionLabel="name"
-        placeholder="Select project"
-      ></p-select>
+    <div class="checks mb-20 tc-flex-row">
+      <p-checkbox
+        binary="true"
+        inputId="break"
+        formControlName="extraBreak"
+      ></p-checkbox>
+      <label for="break">Extra Break</label>
     </div>
 
-    <div>
-      <label>Date</label>
-      <p-datepicker dateFormat="dd/mm/yy" placeholder="dd/mm/yyyy" [showIcon]="true"></p-datepicker>
+    <div
+      class="tc-flex-column mb-20"
+      *ngIf="!!timecardFormGroup.get('extraBreak')?.value"
+    >
+      <label>Break Duration</label>
+      <input
+        pInputText
+        type="number"
+        placeholder="30 Mins"
+        formControlName="breakDuration"
+      />
     </div>
 
-    <div>
-      <label>Start Time</label>
-      <p-date-picker [timeOnly]="true" hourFormat="24" placeholder="Enter start time." [showIcon]="true">
-      </p-date-picker>
+    <div class="summary mb-20">
+      <div class="tc-flex-column">
+        <small>
+          Normal Hours:
+          {{ timecardFormGroup.get("normalHours")?.value || 0 }} Hours
+        </small>
+        <small>
+          Overtime Hours:
+          {{ timecardFormGroup.get("overTimeHours")?.value || 0 }} Hours
+        </small>
+      </div>
+      <p-divider align="center" type="solid"> </p-divider>
+      <small>Total Work Hours</small>
+      <h2>{{ timecardFormGroup.get("totalWorkHours")?.value || 0 }} Hours</h2>
     </div>
 
-    <div>
-      <label>End Time</label>
-      <p-date-picker [timeOnly]="true" hourFormat="24" placeholder="Enter end time." [showIcon]="true">
-      </p-date-picker>
+    <div class="actions">
+      <p-button
+        label="Clear"
+        severity="secondary"
+        icon="pi pi-refresh"
+        size="large"
+        (onClick)="resetForm()"
+      ></p-button>
+      <p-button
+        label="Save Log"
+        icon="pi pi-save"
+        size="large"
+        (onClick)="onSaveClicked($event)"
+      ></p-button>
     </div>
+  </p-card>
 
-  </div>
-
-  <div class="checks">
-    <p-checkbox binary="true" inputId="lunch"></p-checkbox>
-    <label for="lunch">Worked through lunch</label>
-  </div>
-
-  <div class="checks">
-    <p-checkbox binary="true" inputId="break"></p-checkbox>
-    <label for="break">Took break</label>
-  </div>
-
-  <label>Break Duration</label>
-  <input pInputText type="number" placeholder="30" />
-
-  <div class="summary">
-    <small>Estimated Work Hours</small>
-    <h1>08:00</h1>
-  </div>
-
-  <div class="actions">
-    <p-button
-      label="Clear"
-      severity="secondary"
-      icon="pi pi-refresh"
-    ></p-button>
-    <p-button label="Save Log" icon="pi pi-save"></p-button>
-  </div>
-</p-card>
+  <p-toast />
+  <p-confirmdialog />
+</div>

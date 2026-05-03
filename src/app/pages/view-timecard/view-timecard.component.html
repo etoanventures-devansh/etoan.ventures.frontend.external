@@ -1,1 +1,125 @@
-<p>view-timecard works!</p>
+<p-card>
+  <div class="tc-header">
+    <div>
+      <h2 class="tc-title">
+        <i class="pi pi-calendar-clock"></i>
+        View Timecards
+      </h2>
+      <p class="tc-subtitle">Search and view submitted daily timecards</p>
+    </div>
+  </div>
+
+  <form [formGroup]="searchForm" class="search-box">
+    <span class="p-input-icon-left search-input">
+      <input
+        pInputText
+        formControlName="searchText"
+        placeholder="Last 4 characters of NRIC/FIN."
+      />
+    </span>
+
+    <p-button
+      label="Search"
+      icon="pi pi-search"
+      size="large"
+      type="button"
+      (onClick)="searchTimecards()"
+    ></p-button>
+
+    <p-button
+      label="Clear"
+      icon="pi pi-refresh"
+      severity="secondary"
+      size="large"
+      type="button"
+      (onClick)="clearSearch()"
+    ></p-button>
+  </form>
+</p-card>
+
+<div class="cards-grid" *ngIf="filteredTimecards.length > 0">
+  <p-card
+    class="timecard-card"
+    *ngFor="let item of filteredTimecards"
+  >
+    <ng-template pTemplate="header">
+      <div class="card-top">
+        <div>
+          <h3>
+            <i class="pi pi-calendar"></i>
+            {{ item.date | date: 'dd MMM yyyy' }}
+          </h3>
+          <p>
+            <i class="pi pi-map-marker"></i>
+            {{ item.projectSite }}
+          </p>
+        </div>
+
+        <p-tag
+          [value]="item.overTimeHours > 0 ? 'OT' : 'Normal'"
+          [severity]="item.overTimeHours > 0 ? 'warn' : 'success'"
+        ></p-tag>
+      </div>
+    </ng-template>
+
+    <div class="worker-row">
+      <div class="avatar">
+        <i class="pi pi-user"></i>
+      </div>
+
+      <div>
+        <h4>{{ item.employeeName }}</h4>
+        <p>{{ maskLast4(item.identifierNumber) }}</p>
+      </div>
+    </div>
+
+    <div class="time-grid">
+      <div class="info-box">
+        <i class="pi pi-clock"></i>
+        <small>Start Time</small>
+        <strong>{{ item.startTime | date: 'hh:mm a' }}</strong>
+      </div>
+
+      <div class="info-box">
+        <i class="pi pi-clock"></i>
+        <small>End Time</small>
+        <strong>{{ item.endTime | date: 'hh:mm a' }}</strong>
+      </div>
+
+      <div class="info-box">
+        <i class="pi pi-hourglass"></i>
+        <small>Total Hours</small>
+        <strong>{{ item.totalHours }} hrs</strong>
+      </div>
+
+      <div class="info-box">
+        <i class="pi pi-pause-circle"></i>
+        <small>Break</small>
+        <strong>{{ item.totalBreakHours }} hrs</strong>
+      </div>
+    </div>
+
+    <div class="summary-row">
+      <div>
+        <small>Normal Hours</small>
+        <h3>{{ item.normalHours }}</h3>
+      </div>
+
+      <div>
+        <small>OT Hours</small>
+        <h3>{{ item.overTimeHours }}</h3>
+      </div>
+
+      <div>
+        <small>Lunch Worked</small>
+        <h3>{{ item.lunchTimeWork ? 'Yes' : 'No' }}</h3>
+      </div>
+    </div>
+  </p-card>
+</div>
+
+<div class="empty-state" *ngIf="filteredTimecards.length === 0">
+  <i class="pi pi-inbox"></i>
+  <h3>No timecards shown</h3>
+  <p>Enter a worker name, ID, or project site and click search.</p>
+</div>

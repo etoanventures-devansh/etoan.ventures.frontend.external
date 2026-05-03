@@ -6,7 +6,8 @@ const EtoanInitialState: EtoanIntialState = {
     loading: false,
     error: null,
     projectSites: null,
-    employeeDetails: null
+    employeeDetails: null,
+    previousTimecards: null
 }
 
 export const etoanReducer = createReducer(EtoanInitialState,
@@ -29,6 +30,17 @@ export const etoanReducer = createReducer(EtoanInitialState,
         ...state, 
         projectSites: action.projectSites, 
         loading: false
+    })),
+    on(EtoanActions.getPreviousTimecards, (state)=> ({
+        ...state,
+        loading: true,
+        error: null
+    })),
+     on(EtoanActions.getPreviousTimecardsSuccess, (state, action)=> ({
+        ...state,
+        loading: false,
+        error: null,
+        previousTimecards: action.timecards
     })),
     on(EtoanActions.apiFailure, (state, action) => ({
         ...state, 

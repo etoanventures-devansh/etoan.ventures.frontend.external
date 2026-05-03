@@ -71,4 +71,34 @@ private etoanHttpService = inject(EtoanHttpService);
       )
     )
   );
+
+  getPreviousTimecards$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(EtoanActions.getPreviousTimecards),
+      switchMap((action) =>
+        this.etoanHttpService.fetchPreviousTimeCards(action.entityId).pipe(
+          map(({ data, error }) => {
+            if (error) {
+              return EtoanActions.apiFailure({
+                concern: 'getPreviousTimecards',
+                error
+              });
+            }
+
+            return EtoanActions.getPreviousTimecardsSuccess({
+              timecards: data ?? []
+            });
+          }),
+          catchError((error) =>
+            of(
+              EtoanActions.apiFailure({
+                concern: 'getPreviousTimecards',
+                error
+              })
+            )
+          )
+        )
+      )
+    )
+  );
 }
