@@ -33,4 +33,12 @@ export class EtoanSandboxService {
     this.store.dispatch(EtoanActions.getPreviousTimecards({entityId: entityId}))
   }
 
+  resetTimeCards(){
+    this.store.dispatch(EtoanActions.resetTimecards())
+  }
+
+  setIsLoading(isLoading: boolean){
+    this.store.dispatch(EtoanActions.setIsLoading({isLoading}))
+  }
+
 }

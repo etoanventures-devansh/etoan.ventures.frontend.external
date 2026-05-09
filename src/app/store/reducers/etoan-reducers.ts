@@ -36,15 +36,25 @@ export const etoanReducer = createReducer(EtoanInitialState,
         loading: true,
         error: null
     })),
+    on(EtoanActions.resetTimecards, (state)=> ({
+        ...state,
+         previousTimecards: null
+    })),
      on(EtoanActions.getPreviousTimecardsSuccess, (state, action)=> ({
         ...state,
         loading: false,
         error: null,
         previousTimecards: action.timecards
     })),
+    
     on(EtoanActions.apiFailure, (state, action) => ({
         ...state, 
         loading: false,
         error: {concern: action.concern, error: action.error}
+    })),
+    on(EtoanActions.setIsLoading, (state, action) => ({
+        ...state, 
+        loading: action.isLoading,
+        error: null
     }))
  )

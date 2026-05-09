@@ -13,7 +13,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
 import { DividerModule } from 'primeng/divider';
 import { EtoanSandboxService } from '../../store/sandbox/etoan-sandbox';
-import { combineLatest, filter } from 'rxjs';
+import { combineLatest, filter, finalize, tap } from 'rxjs';
 import {
   FormBuilder,
   FormGroup,
@@ -208,7 +208,10 @@ export class TimecardEntryComponent implements OnInit {
       refEntityId: this.refEntityIdList.find((entityId) => entityId.code === formValues.worker.code)?.refEntityId
 
     }
-    this.etoanHttp.postSaveTimeCard(payload).subscribe(({status, error}) => {
+    this.etoanHttp.postSaveTimeCard(payload).pipe(
+      tap(()=> this.sandbox.setIsLoading(true)),
+      finalize(() => this.sandbox.setIsLoading(false))
+    ).subscribe(({status, error}) => {
       if(status === 201){
         this.resetForm()
         this.messageService.add({

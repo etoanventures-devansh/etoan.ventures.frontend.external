@@ -7,4 +7,6 @@ export const getProjectSites = createAction('[Project Sites] getProjectSites');
 export const getProjectSitesSuccess = createAction('[Project Sites] getProjectSitesSuccess', props<{projectSites: ProjectSites[]}>());
 export const getPreviousTimecards = createAction('[Timecards] getPreviousTimecards', props<{entityId: string}>())
 export const getPreviousTimecardsSuccess = createAction('[Timecards] getPreviousTimecardsSuccess', props<{timecards: PreviousTimecards[]}>())
-export const apiFailure = createAction('[Failure] apiFailure', props<{concern: API_FAILURE_TYPES, error: any }>())
+export const resetTimecards = createAction('[Timecards] resetTimecards');
+export const setIsLoading = createAction('[Loading] setIsLoading', props<{isLoading: boolean}>())
+export const apiFailure = createAction('[Failure] apiFailure', props<{concern: API_FAILURE_TYPES, error: any }>());

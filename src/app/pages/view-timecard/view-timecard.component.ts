@@ -58,7 +58,7 @@ export class ViewTimecardComponent {
   }
 
   ngOnDestroy(){
-    this.filteredTimecards = [];
+    this.sandbox.resetTimeCards();
   }
 
   initSubscriptions(){
