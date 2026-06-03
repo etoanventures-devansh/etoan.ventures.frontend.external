@@ -1,73 +1,294 @@
-<div class="page-header">
-  <h2>Salary Entry</h2>
+<!-- salary-entry.component.html -->
 
-  <div>
-    <p-button label="Cancel" severity="secondary"></p-button>
-    <p-button label="Preview Payslip" icon="pi pi-file-pdf" severity="secondary"></p-button>
-    <p-button label="Save Record" icon="pi pi-save"></p-button>
-  </div>
-</div>
-
-<div class="salary-grid">
-  <p-card header="Employee Details">
-    <label>Employee Name</label>
-    <p-select [options]="[]" optionLabel="name"></p-select>
-
-    <label>Designation</label>
-    <input pInputText />
-
-    <label>NRIC/FIN</label>
-    <input pInputText />
-
-    <label>Payslip Period</label>
-    <p-select [options]="[]"></p-select>
-
-    <label>Date of Payment</label>
-    <p-datepicker></p-datepicker>
-
-    <label>Mode of Payment</label>
-    <p-select [options]="[]"></p-select>
-  </p-card>
-
-  <p-card header="Earnings & Work">
-    <label>Basic Pay</label>
-    <input pInputText type="number" />
-
-    <label>Days Worked</label>
-    <input pInputText type="number" />
-
-    <h4>Overtime Details</h4>
-
-    <label>OT Rate</label>
-    <input pInputText type="number" />
-
-    <label>OT Hours</label>
-    <input pInputText type="number" />
-
-    <h4>Allowances</h4>
-
-    <label>Medical</label>
-    <input pInputText type="number" />
-
-    <label>Transport</label>
-    <input pInputText type="number" />
-  </p-card>
-
-  <p-card header="Deductions & Summary">
-    <label>Cash Advance</label>
-    <input pInputText type="number" />
-
-    <label>Fines</label>
-    <input pInputText type="number" />
-
-    <hr />
-
-    <p>Gross Salary: <strong>$6,300.00</strong></p>
-    <p>Total Deductions: <strong>$0.00</strong></p>
-
-    <div class="summary">
-      <small>Final Net Salary Payable</small>
-      <h1>$6,300.25</h1>
+<div class="salary-page">
+  <!-- Header -->
+  <div class="topbar">
+    <div>
+      <h1>Salary Entry</h1>
+      <p>Manage and process monthly employee payroll payouts</p>
     </div>
-  </p-card>
+
+    <div class="topbar-actions">
+      <button
+        pButton
+        type="button"
+        label="Cancel"
+        icon="pi pi-times"
+        class="p-button-outlined"
+        severity="danger"
+      ></button>
+
+      <button
+        pButton
+        type="button"
+        label="Preview Payslip (PDF)"
+        icon="pi pi-file-pdf"
+        severity="info"
+        class="p-button-outlined"
+      ></button>
+
+      <button
+        pButton
+        type="button"
+        label="Save Record"
+        icon="pi pi-save"
+        class="p-button-outlined"
+        severity="success"
+
+      ></button>
+    </div>
+  </div>
+
+  <!-- Grid -->
+  <div class="salary-grid">
+    <!-- LEFT -->
+    <div class="salary-card">
+      <div class="section-header">
+        <h2>Employee Details</h2>
+        <p>Select the employee and payment period</p>
+      </div>
+
+      <div class="form-group">
+        <label>EMPLOYEE NAME *</label>
+
+        <p-select
+          [options]="employees"
+          optionLabel="name"
+          placeholder="Select Employee"
+          styleClass="w-full"
+        ></p-select>
+      </div>
+
+      <div class="two-col">
+        <div class="form-group">
+          <label>DESIGNATION</label>
+
+          <input
+            pInputText
+            [value]="selectedEmployee.designation"
+            readonly
+          />
+        </div>
+
+        <div class="form-group">
+          <label>NRIC/FIN</label>
+
+          <input pInputText [value]="selectedEmployee.nric" readonly />
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="form-group">
+          <label>PAYSLIP PERIOD *</label>
+
+          <p-select
+            [options]="months"
+            styleClass="w-full"
+          ></p-select>
+        </div>
+
+        <div class="form-group">
+          <label>DATE OF PAYMENT *</label>
+
+          <p-date-picker
+            dateFormat="yy-mm-dd"
+            appendTo="body"
+            styleClass="w-full"
+          ></p-date-picker>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>MODE OF PAYMENT *</label>
+
+        <p-select
+          [options]="paymentModes"
+          styleClass="w-full"
+        ></p-select>
+      </div>
+    </div>
+
+    <!-- MIDDLE -->
+    <div class="salary-card">
+      <div class="section-header">
+        <h2>Earnings & Work</h2>
+        <p>Primary income and allowance components</p>
+      </div>
+
+      <div class="two-col">
+        <div class="form-group">
+          <label>BASIC PAY ($) *</label>
+
+          <p-inputNumber
+            mode="decimal"
+            [minFractionDigits]="0"
+            styleClass="w-full"
+          ></p-inputNumber>
+        </div>
+
+        <div class="form-group">
+          <label>DAYS WORKED *</label>
+
+          <p-inputNumber
+            styleClass="w-full"
+          ></p-inputNumber>
+        </div>
+      </div>
+
+      <!-- OT -->
+      <div class="inner-card">
+        <div class="inner-title">
+          <span class="dot"></span>
+          <h3>Overtime Details</h3>
+        </div>
+
+        <div class="two-col">
+          <div class="form-group">
+            <label>OT RATE ($/HR)</label>
+
+            <p-inputNumber
+              styleClass="w-full"
+            ></p-inputNumber>
+          </div>
+
+          <div class="form-group">
+            <label>OT HOURS</label>
+
+            <p-inputNumber
+              styleClass="w-full"
+            ></p-inputNumber>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>TOTAL OT PAY</label>
+
+          <div class="readonly-box amount-blue">
+            $ {{ totalOtPay | number : '1.2-2' }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Allowances -->
+      <div class="allowance-section">
+        <div class="inner-title">
+          <span class="dot"></span>
+          <h3>Allowances</h3>
+        </div>
+
+        <div class="two-col">
+          <div class="form-group">
+            <label>MEDICAL ($)</label>
+
+            <p-inputNumber
+              styleClass="w-full"
+            ></p-inputNumber>
+          </div>
+
+          <div class="form-group">
+            <label>TRANSPORT ($)</label>
+
+            <p-inputNumber
+              styleClass="w-full"
+            ></p-inputNumber>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>OTHER PAYMENTS ($)</label>
+
+          <p-inputNumber
+            styleClass="w-full"
+          ></p-inputNumber>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="salary-card">
+      <div class="section-header">
+        <h2>Deductions & Summary</h2>
+        <p>Final calculations and subtractions</p>
+      </div>
+
+      <!-- DEDUCTIONS -->
+      <div class="deduction-card">
+        <div class="inner-title">
+          <span class="dot"></span>
+          <h3>Deductions</h3>
+        </div>
+
+        <div class="two-col">
+          <div class="form-group">
+            <label>CASH ADVANCE ($)</label>
+
+            <p-inputNumber
+              styleClass="w-full"
+            ></p-inputNumber>
+          </div>
+
+          <div class="form-group">
+            <label>FINES ($)</label>
+
+            <p-inputNumber
+              styleClass="w-full"
+            ></p-inputNumber>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>TOTAL DEDUCTION</label>
+
+          <div class="readonly-box amount-red">
+            $ {{ totalDeductions | number : '1.2-2' }}
+          </div>
+        </div>
+      </div>
+
+      <!-- SUMMARY -->
+      <div class="summary-row">
+        <span>Gross Salary (Subtotal):</span>
+        <strong>$ {{ grossSalary | number : '1.2-2' }}</strong>
+      </div>
+
+      <div class="summary-row">
+        <span>Total Deductions:</span>
+        <strong class="negative">
+          -$ {{ totalDeductions | number : '1.2-2' }}
+        </strong>
+      </div>
+
+      <div class="summary-row">
+        <span>Rounding Adj:</span>
+
+        <div class="rounding-box">
+          <p-inputNumber
+            mode="decimal"
+            [minFractionDigits]="2"
+          ></p-inputNumber>
+        </div>
+      </div>
+
+      <!-- FINAL CARD -->
+      <div class="final-card">
+        <p>FINAL NET SALARY PAYABLE</p>
+
+        <h1>$ {{ finalSalary | number : '1.2-2' }}</h1>
+
+        <div class="divider"></div>
+
+        <div class="final-bottom">
+          <div>
+            <small>PAYOUT STATUS</small>
+            <strong>READY TO SAVE</strong>
+          </div>
+
+          <div>
+            <small>PERIOD</small>
+            <strong>{{ selectedMonth }}</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

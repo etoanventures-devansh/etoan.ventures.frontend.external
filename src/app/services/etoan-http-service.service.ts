@@ -38,4 +38,14 @@ export class EtoanHttpService {
         .insert(payload),
     );
   }
+
+   fetchTimecardRecords() {
+    return from(
+      this.supabaseClient.client
+        .from(TABLE_NAMES.TIMECARD_ENTRY)
+        .select('*')
+        .order('date', { ascending: false })
+        .order('employeeName', { ascending: true }),
+    );
+  }
 }
