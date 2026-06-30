@@ -1,19 +1,4 @@
 <!-- salary-entry.component.html -->
-<form [formGroup]="payrollForm" *ngIf="showPage">
-  <p-select
-          formControlName="workerName"
-          [options]="workerDetails"
-          optionLabel="name"
-          placeholder="Select Employee"
-          [ngClass]="{
-            'ng-invalid ng-dirty':
-              payrollForm.get('workerName')?.invalid &&
-              payrollForm.get('workerName')?.touched,
-          }"
-        ></p-select>
-</form>
-
-
 <form class="salary-page" [formGroup]="payrollForm" *ngIf="showPage">
   <!-- Header -->
   <div class="topbar">
@@ -30,6 +15,7 @@
         icon="pi pi-times"
         class="p-button-outlined"
         severity="danger"
+        (click)="resetForm()"
       ></button>
 
       <button
@@ -48,6 +34,7 @@
         icon="pi pi-save"
         class="p-button-outlined"
         severity="success"
+        (click)="onSaveClicked($event)"
       ></button>
     </div>
   </div>
@@ -93,7 +80,11 @@
         <div class="form-group">
           <label>NRIC/FIN</label>
 
-          <input pInputText [value]="payrollForm.get('identifierNumber').value" readonly />
+          <input
+            pInputText
+            [value]="payrollForm.get('identifierNumber').value"
+            readonly
+          />
         </div>
       </div>
 
@@ -101,7 +92,11 @@
         <div class="form-group">
           <label>PAYSLIP PERIOD *</label>
 
-          <p-select [options]="months" styleClass="w-full"></p-select>
+          <p-select
+            [options]="months"
+            styleClass="w-full"
+            formControlName="payslipPeriod"
+          ></p-select>
         </div>
 
         <div class="form-group">
@@ -112,6 +107,7 @@
             appendTo="body"
             styleClass="w-full"
             formControlName="dateOfPayment"
+            [readonlyInput]="true"
           ></p-date-picker>
         </div>
       </div>
@@ -119,7 +115,11 @@
       <div class="form-group">
         <label>MODE OF PAYMENT *</label>
 
-        <p-select [options]="paymentModes" styleClass="w-full"></p-select>
+        <p-select
+          [options]="paymentModes"
+          styleClass="w-full"
+          formControlName="modeOfPayment"
+        ></p-select>
       </div>
     </div>
 
@@ -127,25 +127,41 @@
     <div class="salary-card">
       <div class="section-header">
         <h2>Earnings & Work</h2>
-        <p>Primary income and allowance components</p>
+        <p>Primary income and allowance</p>
       </div>
 
-      <div class="two-col">
-        <div class="form-group">
-          <label>BASIC PAY ($) *</label>
+      <div class="inner-card">
+        <div class="inner-title">
+          <span class="dot"></span>
+          <h3>Basic Pay Details</h3>
+        </div>
 
-          <p-inputNumber
-            mode="decimal"
-            [minFractionDigits]="0"
-            styleClass="w-full"
-            formControlName="basicPay"
-          ></p-inputNumber>
+        <div class="two-col">
+          <div class="form-group">
+            <label>BASIC PAY ($) *</label>
+
+            <p-inputNumber
+              styleClass="w-full"
+              formControlName="basicPay"
+            ></p-inputNumber>
+          </div>
+
+          <div class="form-group">
+            <label>DAYS WORKED *</label>
+
+            <p-inputNumber
+              styleClass="w-full"
+              formControlName="daysWorked"
+            ></p-inputNumber>
+          </div>
         </div>
 
         <div class="form-group">
-          <label>DAYS WORKED *</label>
+          <label>TOTAL BASIC PAY</label>
 
-          <p-inputNumber styleClass="w-full"></p-inputNumber>
+          <div class="readonly-box amount-blue">
+            $ {{ payrollForm.get("totalBasicPay").value | number: "1.2-2" }}
+          </div>
         </div>
       </div>
 
@@ -160,13 +176,19 @@
           <div class="form-group">
             <label>OT RATE ($/HR)</label>
 
-            <p-inputNumber styleClass="w-full" formControlName="otRate"></p-inputNumber>
+            <p-inputNumber
+              styleClass="w-full"
+              formControlName="otRate"
+            ></p-inputNumber>
           </div>
 
           <div class="form-group">
             <label>OT HOURS</label>
 
-            <p-inputNumber styleClass="w-full"></p-inputNumber>
+            <p-inputNumber
+              styleClass="w-full"
+              formControlName="otHours"
+            ></p-inputNumber>
           </div>
         </div>
 
@@ -174,36 +196,63 @@
           <label>TOTAL OT PAY</label>
 
           <div class="readonly-box amount-blue">
-            $ {{ totalOtPay | number: "1.2-2" }}
+            $ {{ payrollForm.get("totalOtPay").value | number: "1.2-2" }}
           </div>
         </div>
       </div>
 
       <!-- Allowances -->
-      <div class="allowance-section">
+      <div class="inner-card">
         <div class="inner-title">
           <span class="dot"></span>
           <h3>Allowances</h3>
+        </div>
+        <div class="two-col">
+          <div class="form-group">
+            <label>TRANSPORT DAYS *</label>
+
+            <p-inputNumber
+              styleClass="w-full"
+              formControlName="transportDays"
+            ></p-inputNumber>
+          </div>
+
+          <div class="form-group">
+            <label>TRANSPORT RATE ($)</label>
+
+            <p-inputNumber
+              styleClass="w-full"
+              formControlName="transportRate"
+            ></p-inputNumber>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>TOTAL TRANSPORT ALLOWANCE</label>
+
+          <div class="readonly-box amount-blue">
+            $ {{ payrollForm.get("totalTransport").value | number: "1.2-2" }}
+          </div>
         </div>
 
         <div class="two-col">
           <div class="form-group">
             <label>MEDICAL ($)</label>
 
-            <p-inputNumber styleClass="w-full"></p-inputNumber>
+            <p-inputNumber
+              styleClass="w-full"
+              formControlName="medical"
+            ></p-inputNumber>
           </div>
 
           <div class="form-group">
-            <label>TRANSPORT ($)</label>
+            <label>OTHER PAYMENTS ($)</label>
 
-            <p-inputNumber styleClass="w-full"></p-inputNumber>
+            <p-inputNumber
+              styleClass="w-full"
+              formControlName="otherPayments"
+            ></p-inputNumber>
           </div>
-        </div>
-
-        <div class="form-group">
-          <label>OTHER PAYMENTS ($)</label>
-
-          <p-inputNumber styleClass="w-full"></p-inputNumber>
         </div>
       </div>
     </div>
@@ -226,13 +275,19 @@
           <div class="form-group">
             <label>CASH ADVANCE ($)</label>
 
-            <p-inputNumber styleClass="w-full"></p-inputNumber>
+            <p-inputNumber
+              styleClass="w-full"
+              formControlName="cashAdvance"
+            ></p-inputNumber>
           </div>
 
           <div class="form-group">
             <label>FINES ($)</label>
 
-            <p-inputNumber styleClass="w-full"></p-inputNumber>
+            <p-inputNumber
+              styleClass="w-full"
+              formControlName="fines"
+            ></p-inputNumber>
           </div>
         </div>
 
@@ -240,7 +295,7 @@
           <label>TOTAL DEDUCTION</label>
 
           <div class="readonly-box amount-red">
-            $ {{ totalDeductions | number: "1.2-2" }}
+            $ {{ payrollForm.get("totalDeductions").value | number: "1.2-2" }}
           </div>
         </div>
       </div>
@@ -248,13 +303,16 @@
       <!-- SUMMARY -->
       <div class="summary-row">
         <span>Gross Salary (Subtotal):</span>
-        <strong>$ {{ grossSalary | number: "1.2-2" }}</strong>
+        <strong
+          >$
+          {{ payrollForm.get("grossSalary").value | number: "1.2-2" }}</strong
+        >
       </div>
 
       <div class="summary-row">
         <span>Total Deductions:</span>
         <strong class="negative">
-          -$ {{ totalDeductions | number: "1.2-2" }}
+          -$ {{ payrollForm.get("totalDeductions").value | number: "1.2-2" }}
         </strong>
       </div>
 
@@ -262,7 +320,11 @@
         <span>Rounding Adj:</span>
 
         <div class="rounding-box">
-          <p-inputNumber mode="decimal" [minFractionDigits]="2"></p-inputNumber>
+          <p-inputNumber
+            mode="decimal"
+            [minFractionDigits]="2"
+            formControlName="roundingAdjustment"
+          ></p-inputNumber>
         </div>
       </div>
 
@@ -270,7 +332,9 @@
       <div class="final-card">
         <p>FINAL NET SALARY PAYABLE</p>
 
-        <h1>$ {{ finalSalary | number: "1.2-2" }}</h1>
+        <h1>
+          $ {{ payrollForm.get("finalNetSalary").value | number: "1.2-2" }}
+        </h1>
 
         <div class="divider"></div>
 
@@ -289,3 +353,6 @@
     </div>
   </div>
 </form>
+
+  <p-toast />
+  <p-confirmdialog />

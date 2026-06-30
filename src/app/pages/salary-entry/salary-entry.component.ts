@@ -11,7 +11,7 @@ import { TagModule } from 'primeng/tag';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { EtoanSandboxService } from '../../store/sandbox/etoan-sandbox';
-import { combineLatest } from 'rxjs';
+import { combineLatest, forkJoin, startWith } from 'rxjs';
 import { EmployeeDetails, EmployeeSalaryRate } from '../../models/etoan-models';
 import {
   FormBuilder,
@@ -19,6 +19,9 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 @Component({
   selector: 'app-salary-entry',
@@ -36,7 +39,10 @@ import {
     DecimalPipe,
     CommonModule,
     ReactiveFormsModule,
+    ToastModule,
+    ConfirmDialogModule,
   ],
+  providers: [ConfirmationService, MessageService],
   templateUrl: './salary-entry.component.html',
   styleUrl: './salary-entry.component.scss',
 })
@@ -51,14 +57,17 @@ export class SalaryEntryComponent implements OnInit, AfterViewInit {
 
   payrollForm: FormGroup | undefined;
 
-  constructor(private sandbox: EtoanSandboxService) {
+  constructor(
+    private sandbox: EtoanSandboxService,
+    private confirmationService: ConfirmationService,
+    private messageService: MessageService,
+  ) {
     this.payrollForm = new FormBuilder().group({
       workerName: [null, Validators.required],
       designation: ['', Validators.required],
       identifierNumber: ['', Validators.required],
       dateOfPayment: [new Date(), Validators.required],
       modeOfPayment: ['', Validators.required],
-      selectedMonth: ['', Validators.required],
       payslipPeriod: ['', Validators.required],
 
       paymentMode: ['Bank Transfer (GIRO)', Validators.required],
@@ -66,18 +75,25 @@ export class SalaryEntryComponent implements OnInit, AfterViewInit {
 
       basicPay: [0.0, [Validators.required, Validators.min(0)]],
       daysWorked: [0.0, [Validators.required, Validators.min(0)]],
+      totalBasicPay: [0.0],
 
       otRate: [0.0, [Validators.min(0)]],
       otHours: [0.0, [Validators.min(0)]],
+      totalOtPay: [0.0],
 
       medical: [0.0, [Validators.min(0)]],
-      transport: [0.0, [Validators.min(0)]],
+      totalTransport: [0.0, [Validators.min(0)]],
+      transportDays: [0.0, Validators.required],
+      transportRate: [0.0],
       otherPayments: [0.0, [Validators.min(0)]],
 
       cashAdvance: [0.0, [Validators.min(0)]],
       fines: [0.0, [Validators.min(0)]],
+      totalDeductions: [0.0],
 
+      grossSalary: [0.0],
       roundingAdjustment: [0.0],
+      finalNetSalary: [0.0],
     });
   }
 
@@ -92,19 +108,144 @@ export class SalaryEntryComponent implements OnInit, AfterViewInit {
     this.payrollForm
       .get('workerName')
       ?.valueChanges.subscribe(({ name, id }) => {
-        console.warn(name);
         const selectedWorkerDetails = this.employeeDetails?.find(
           (worker) => worker.name === name,
         );
-        const selectedWorkerSalaryRate = this.salaryRate.find((rates) => selectedWorkerDetails.entityId === rates.employee_entity_id)
+        const selectedWorkerSalaryRate = this.salaryRate.find(
+          (rates) =>
+            selectedWorkerDetails.entityId === rates.employee_entity_id,
+        );
         this.payrollForm.patchValue({
           designation: selectedWorkerDetails?.designation,
           identifierNumber: selectedWorkerDetails?.identifierNumber,
           dateOfPayment: new Date(),
           basicPay: selectedWorkerSalaryRate.daily_rate,
-          otRate: selectedWorkerSalaryRate.overtime_rate
+          otRate: selectedWorkerSalaryRate.overtime_rate,
+          transportRate: selectedWorkerSalaryRate.transport_rate,
         });
       });
+
+    // Basic Pay + OT Pay Calculation
+
+    combineLatest({
+      daysWorked: this.payrollForm
+        .get('daysWorked')!
+        .valueChanges.pipe(
+          startWith(this.payrollForm.get('daysWorked')!.value),
+        ),
+      otHours: this.payrollForm
+        .get('otHours')!
+        .valueChanges.pipe(startWith(this.payrollForm.get('otHours')!.value)),
+    }).subscribe(({ daysWorked, otHours }) => {
+      this.payrollForm.patchValue({
+        totalBasicPay: +daysWorked * +this.payrollForm.get('basicPay')!.value,
+        totalOtPay: +otHours * +this.payrollForm.get('otRate')!.value,
+      });
+    });
+
+    // Total Transport Calculation
+
+    combineLatest({
+      transportRate: this.payrollForm
+        .get('transportRate')!
+        .valueChanges.pipe(
+          startWith(this.payrollForm.get('transportRate')!.value),
+        ),
+      transportDays: this.payrollForm
+        .get('transportDays')!
+        .valueChanges.pipe(
+          startWith(this.payrollForm.get('transportDays')!.value),
+        ),
+    }).subscribe(({ transportRate, transportDays }) => {
+      this.payrollForm.patchValue({
+        totalTransport: +transportDays * +transportRate,
+      });
+    });
+
+    // Gross Salary Calculation
+
+    combineLatest({
+      totalBasicPay: this.payrollForm
+        .get('totalBasicPay')
+        .valueChanges.pipe(
+          startWith(this.payrollForm.get('totalBasicPay')!.value),
+        ),
+      totalOtPay: this.payrollForm
+        .get('totalOtPay')
+        .valueChanges.pipe(
+          startWith(this.payrollForm.get('totalOtPay')!.value),
+        ),
+      totalTransport: this.payrollForm
+        .get('totalTransport')
+        .valueChanges.pipe(
+          startWith(this.payrollForm.get('totalTransport')!.value),
+        ),
+      medical: this.payrollForm
+        .get('medical')
+        .valueChanges.pipe(startWith(this.payrollForm.get('medical')!.value)),
+      otherPayments: this.payrollForm
+        .get('otherPayments')
+        .valueChanges.pipe(
+          startWith(this.payrollForm.get('otherPayments')!.value),
+        ),
+    }).subscribe(
+      ({
+        totalBasicPay,
+        totalOtPay,
+        totalTransport,
+        medical,
+        otherPayments,
+      }) => {
+        this.payrollForm.patchValue({
+          grossSalary:
+            +totalBasicPay +
+            +totalOtPay +
+            +totalTransport +
+            +medical +
+            +otherPayments,
+        });
+      },
+    );
+
+    // Deductions Calculation
+
+    combineLatest({
+      cashAdvance: this.payrollForm
+        .get('cashAdvance')
+        .valueChanges.pipe(
+          startWith(this.payrollForm.get('cashAdvance')!.value),
+        ),
+      fines: this.payrollForm
+        .get('fines')
+        .valueChanges.pipe(startWith(this.payrollForm.get('fines')!.value)),
+    }).subscribe(({ cashAdvance, fines }) => {
+      this.payrollForm.patchValue({
+        totalDeductions: +cashAdvance + +fines,
+      });
+    });
+
+    // Net Salary Calculation
+    combineLatest({
+      grossSalary: this.payrollForm
+        .get('grossSalary')
+        .valueChanges.pipe(
+          startWith(this.payrollForm.get('grossSalary')!.value),
+        ),
+      totalDeductions: this.payrollForm
+        .get('totalDeductions')
+        .valueChanges.pipe(
+          startWith(this.payrollForm.get('totalDeductions')!.value),
+        ),
+      roundingAdjustment: this.payrollForm
+        .get('roundingAdjustment')
+        .valueChanges.pipe(
+          startWith(this.payrollForm.get('roundingAdjustment')!.value),
+        ),
+    }).subscribe(({ grossSalary, totalDeductions, roundingAdjustment }) => {
+      this.payrollForm.patchValue({
+        finalNetSalary: +grossSalary + +roundingAdjustment - +totalDeductions,
+      });
+    });
   }
 
   initSubscriptions() {
@@ -119,7 +260,6 @@ export class SalaryEntryComponent implements OnInit, AfterViewInit {
           id: worker.identifierNumber ?? '',
         })) ?? [];
       this.salaryRate = salaryRate;
-      console.warn(salaryRate);
       this.showPage = true;
     });
   }
@@ -145,43 +285,54 @@ export class SalaryEntryComponent implements OnInit, AfterViewInit {
       1,
     );
     this.selectedMonth = formatter.format(previousMonth);
+    this.payrollForm.patchValue({
+      payslipPeriod: this.selectedMonth,
+    });
   }
 
-  paymentMode = 'Bank Transfer (GIRO)';
-  paymentDate = new Date();
-
-  basicPay = 5500;
-  daysWorked = 22;
-
-  otRate = 45;
-  otHours = 10;
-
-  medical = 150;
-  transport = 200;
-  otherPayments = 0;
-
-  cashAdvance = 0;
-  fines = 0;
-
-  roundingAdjustment = 0.25;
-
-  get totalOtPay(): number {
-    return this.otRate * this.otHours;
+  resetForm() {
+    this.payrollForm.reset();
   }
 
-  get totalAllowances(): number {
-    return this.medical + this.transport + this.otherPayments;
+  onSaveClicked(event: Event) {
+    if (this.payrollForm.invalid) {
+      Object.keys(this.payrollForm.controls).forEach((key) => {
+        const control = this.payrollForm.get(key);
+
+        if (control?.invalid) {
+          console.log(key, control.errors);
+        }
+      });
+      this.payrollForm.markAllAsTouched();
+      return;
+    }
+    this.confirmationService.confirm({
+      target: event.target as EventTarget,
+      message: `Submitting Salary for ${this.payrollForm.get('workerName')?.value.name} (FIN: ${this.payrollForm.get('identifierNumber').value}) for month of ${this.payrollForm.get('payslipPeriod').value}`,
+      header: 'Confirmation',
+      closable: true,
+      closeOnEscape: true,
+      icon: 'pi pi-verified',
+      rejectButtonProps: {
+        label: 'Cancel',
+        severity: 'secondary',
+        outlined: true,
+      },
+      acceptButtonProps: {
+        label: 'Save',
+      },
+      accept: () => {
+        this.saveSalaryEntry();
+      },
+      reject: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Cancel',
+          detail: 'You have cancelled salary submission.',
+        });
+      },
+    });
   }
 
-  get totalDeductions(): number {
-    return this.cashAdvance + this.fines;
-  }
-
-  get grossSalary(): number {
-    return this.basicPay + this.totalOtPay + this.totalAllowances;
-  }
-
-  get finalSalary(): number {
-    return this.grossSalary - this.totalDeductions + this.roundingAdjustment;
-  }
+  saveSalaryEntry() {}
 }
