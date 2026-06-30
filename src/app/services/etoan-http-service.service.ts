@@ -48,4 +48,12 @@ export class EtoanHttpService {
         .order('employeeName', { ascending: true }),
     );
   }
+
+  fetchEmployeeSalaryRates(){
+    return from(
+      this.supabaseClient.client
+      .from(TABLE_NAMES.EMPLOYEE_SALARY_RATE)
+      .select('*')
+    )
+  }
 }

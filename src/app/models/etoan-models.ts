@@ -40,7 +40,8 @@ export interface EtoanIntialState {
   loading: boolean;
   projectSites: ProjectSites[] | null;
   employeeDetails: EmployeeDetails[] | null;
-  previousTimecards: PreviousTimecards[] | null
+  previousTimecards: PreviousTimecards[] | null;
+  employeeSalaryRate: EmployeeSalaryRate[] | null;
 }
 
 export interface TimecardEntry {
@@ -75,4 +76,17 @@ export interface PreviousTimecards {
   overTimeHours: number
 }
 
-export type API_FAILURE_TYPES = 'getEmployeeDetails' | 'getProjectSites' | 'getPreviousTimecards'
+
+export interface EmployeeSalaryRate {
+  id: string
+  employee_entity_id: string
+  daily_rate: number
+  overtime_rate: number
+  transport_rate: number
+  effective_from: string
+  is_active: boolean
+  created_at: string
+  updated_at: string
+}
+
+export type API_FAILURE_TYPES = 'getEmployeeDetails' | 'getProjectSites' | 'getPreviousTimecards' | 'getEmployeeSalaryRate'

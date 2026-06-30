@@ -1,7 +1,7 @@
 import { CommonModule, DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { finalize } from 'rxjs';
+import { finalize, tap } from 'rxjs';
 
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
@@ -14,6 +14,7 @@ import { MessageModule } from 'primeng/message';
 
 import { PreviousTimecards } from '../../models/etoan-models';
 import { EtoanHttpService } from '../../services/etoan-http-service.service';
+import { EtoanSandboxService } from '../../store/sandbox/etoan-sandbox';
 
 interface FilterOption {
   label: string;
@@ -53,7 +54,7 @@ export class TimecardRecordsComponent implements OnInit {
   loading = false;
   errorMessage = '';
 
-  constructor(private etoanHttp: EtoanHttpService) {}
+  constructor(private etoanHttp: EtoanHttpService, private sandbox: EtoanSandboxService) {}
 
   ngOnInit(): void {
     this.loadRecords();
@@ -65,7 +66,7 @@ export class TimecardRecordsComponent implements OnInit {
 
     this.etoanHttp
       .fetchTimecardRecords()
-      .pipe(finalize(() => (this.loading = false)))
+      .pipe(tap(()=> this.sandbox.setIsLoading(true)),finalize(() => this.sandbox.setIsLoading(false)))
       .subscribe(({ data, error }) => {
         if (error) {
           this.errorMessage = 'Unable to load timecard records. Please try again.';
