@@ -131,4 +131,34 @@ private etoanHttpService = inject(EtoanHttpService);
       )
     )
   );
+
+   getEmployeeSalaryRecords$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(EtoanActions.getEmployeeSalaryRecords),
+      switchMap(() =>
+        this.etoanHttpService.fetchEmployeeSalaryRecords().pipe(
+          map(({ data, error }) => {
+            if (error) {
+              return EtoanActions.apiFailure({
+                concern: 'getEmployeeSalaryRecords',
+                error
+              });
+            }
+
+            return EtoanActions.getEmployeeSalaryRecordsSuccess({
+              salaryRecords: data ?? []
+            });
+          }),
+          catchError((error) =>
+            of(
+              EtoanActions.apiFailure({
+                concern: 'getEmployeeSalaryRecords',
+                error
+              })
+            )
+          )
+        )
+      )
+    )
+  );
 }

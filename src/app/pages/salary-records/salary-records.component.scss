@@ -1,0 +1,113 @@
+.salary-records-page {
+  padding: 1.5rem;
+}
+
+.page-header,
+.filters-row,
+.worker-cell {
+  display: flex;
+  align-items: center;
+}
+
+.page-header {
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+
+  h2 {
+    margin: 0;
+    font-size: 1.75rem;
+  }
+
+  p {
+    margin: 0.4rem 0 0;
+    color: #64748b;
+  }
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+
+  small {
+    color: #64748b;
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+
+  strong {
+    font-size: 1.45rem;
+  }
+}
+
+.filter-card,
+.table-card {
+  margin-bottom: 1rem;
+}
+
+.filters-row {
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.search-field {
+  flex: 1 1 280px;
+
+  input {
+    width: 100%;
+  }
+}
+
+.filter-control {
+  min-width: 160px;
+}
+
+.worker-cell {
+  gap: 0.6rem;
+}
+
+.avatar {
+  align-items: center;
+  background: #e0f2fe;
+  border-radius: 50%;
+  color: #0369a1;
+  display: inline-flex;
+  font-weight: 700;
+  height: 2rem;
+  justify-content: center;
+  width: 2rem;
+}
+
+td small {
+  color: #64748b;
+  display: block;
+  margin-top: 0.2rem;
+}
+
+.empty-state {
+  color: #64748b;
+  padding: 2rem;
+  text-align: center;
+
+  i {
+    font-size: 2rem;
+  }
+
+  h3 {
+    color: #0f172a;
+    margin-bottom: 0.25rem;
+  }
+}
+
+@media (max-width: 900px) {
+  .summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .page-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

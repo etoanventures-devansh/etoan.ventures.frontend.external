@@ -9,6 +9,7 @@ const EtoanInitialState: EtoanIntialState = {
     employeeDetails: null,
     previousTimecards: null,
     employeeSalaryRate: null,
+    employeeSalaryRecords: null
 }
 
 export const etoanReducer = createReducer(EtoanInitialState,
@@ -58,6 +59,17 @@ export const etoanReducer = createReducer(EtoanInitialState,
         loading: false,
         error: null,
         employeeSalaryRate: action.salaryRate
+    })),
+     on(EtoanActions.getEmployeeSalaryRecords, (state)=> ({
+        ...state,
+        loading: true,
+        error: null,
+    })),
+    on(EtoanActions.getEmployeeSalaryRecordsSuccess, (state,action) => ({
+        ...state,
+        loading: false,
+        error: null,
+        employeeSalaryRecords: action.salaryRecords
     })),
 
     on(EtoanActions.apiFailure, (state, action) => ({

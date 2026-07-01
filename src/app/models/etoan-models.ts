@@ -42,6 +42,8 @@ export interface EtoanIntialState {
   employeeDetails: EmployeeDetails[] | null;
   previousTimecards: PreviousTimecards[] | null;
   employeeSalaryRate: EmployeeSalaryRate[] | null;
+  employeeSalaryRecords: EmployeeSalaryRecords[] | null;
+
 }
 
 export interface TimecardEntry {
@@ -121,4 +123,4 @@ export interface EmployeeSalaryRecords {
 }
 
 
-export type API_FAILURE_TYPES = 'getEmployeeDetails' | 'getProjectSites' | 'getPreviousTimecards' | 'getEmployeeSalaryRate'
+export type API_FAILURE_TYPES = 'getEmployeeDetails' | 'getProjectSites' | 'getPreviousTimecards' | 'getEmployeeSalaryRate' | 'getEmployeeSalaryRecords'

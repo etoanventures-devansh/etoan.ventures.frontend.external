@@ -1,1 +1,182 @@
-<p>salary-records works!</p>
+<section class="salary-records-page">
+  <div class="page-header">
+    <div>
+      <h2>Salary Records</h2>
+      <p>Review generated salary records, salary periods, deductions, and net salary paid to workers.</p>
+    </div>
+
+    <p-button
+      label="Refresh"
+      icon="pi pi-refresh"
+      severity="secondary"
+      outlined
+      (onClick)="loadRecords()"
+    ></p-button>
+  </div>
+
+  <div class="summary-grid">
+    <p-card>
+      <small>Records</small>
+      <strong>{{ filteredRecords.length }}</strong>
+    </p-card>
+
+    <p-card>
+      <small>Gross Salary</small>
+      <strong>{{ totalGrossSalary | currency: 'SGD' : 'symbol-narrow' }}</strong>
+    </p-card>
+
+    <p-card>
+      <small>Deductions</small>
+      <strong>{{ totalDeductions | currency: 'SGD' : 'symbol-narrow' }}</strong>
+    </p-card>
+
+    <p-card>
+      <small>Net Salary</small>
+      <strong>{{ totalNetSalary | currency: 'SGD' : 'symbol-narrow' }}</strong>
+    </p-card>
+  </div>
+
+  <p-card class="filter-card">
+    <div class="filters-row">
+      <span class="p-input-icon-left search-field">
+        <i class="pi pi-search"></i>
+        <input
+          pInputText
+          type="text"
+          placeholder="Search worker, FIN/NRIC, designation, or payment mode..."
+          [(ngModel)]="searchText"
+          (ngModelChange)="applyFilters()"
+        />
+      </span>
+
+      <p-select
+        class="filter-control"
+        placeholder="Worker"
+        [options]="workerOptions"
+        optionLabel="label"
+        optionValue="value"
+        [showClear]="true"
+        [(ngModel)]="selectedWorker"
+        (ngModelChange)="applyFilters()"
+      ></p-select>
+
+      <p-select
+        class="filter-control"
+        placeholder="Month"
+        [options]="monthOptions"
+        optionLabel="label"
+        optionValue="value"
+        [showClear]="true"
+        [(ngModel)]="selectedMonth"
+        (ngModelChange)="applyFilters()"
+      ></p-select>
+
+      <p-select
+        class="filter-control"
+        placeholder="Year"
+        [options]="yearOptions"
+        optionLabel="label"
+        optionValue="value"
+        [showClear]="true"
+        [(ngModel)]="selectedYear"
+        (ngModelChange)="applyFilters()"
+      ></p-select>
+
+      <p-datepicker
+        class="filter-control"
+        placeholder="Payment date range"
+        selectionMode="range"
+        [readonlyInput]="true"
+        [showIcon]="true"
+        [(ngModel)]="paymentDateRange"
+        (ngModelChange)="applyFilters()"
+      ></p-datepicker>
+
+      <p-button
+        label="Clear"
+        icon="pi pi-filter-slash"
+        severity="secondary"
+        outlined
+        (onClick)="clearFilters()"
+      ></p-button>
+    </div>
+  </p-card>
+
+  <p-message
+    *ngIf="errorMessage"
+    severity="error"
+    [text]="errorMessage"
+    icon="pi pi-times-circle"
+  ></p-message>
+
+  <p-card class="table-card">
+    <p-table
+      [value]="filteredRecords"
+      [loading]="loading"
+      [paginator]="true"
+      [rows]="10"
+      [rowsPerPageOptions]="[10, 25, 50]"
+      [sortMode]="'multiple'"
+      responsiveLayout="scroll"
+      styleClass="p-datatable-sm"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th pSortableColumn="salary_year">Period <p-sortIcon field="salary_year"></p-sortIcon></th>
+          <th pSortableColumn="employee_name">Worker <p-sortIcon field="employee_name"></p-sortIcon></th>
+          <th>FIN/NRIC</th>
+          <th>Designation</th>
+          <th>Days</th>
+          <th>OT Hrs</th>
+          <th>Gross</th>
+          <th>Deductions</th>
+          <th pSortableColumn="net_salary">Net Salary <p-sortIcon field="net_salary"></p-sortIcon></th>
+          <th>Payment</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-record>
+        <tr>
+          <td>
+            <strong>{{ formatMonth(record.salary_month) }} {{ record.salary_year }}</strong>
+            <small>{{ record.payslip_period_start | date: 'dd MMM' }} - {{ record.payslip_period_end | date: 'dd MMM yyyy' }}</small>
+          </td>
+          <td>
+            <div class="worker-cell">
+              <span class="avatar">{{ record.employee_name?.charAt(0) }}</span>
+              <strong>{{ record.employee_name }}</strong>
+            </div>
+          </td>
+          <td>{{ maskIdentifier(record.identifier_number) }}</td>
+          <td>{{ record.designation }}</td>
+          <td>{{ record.days_worked || 0 }}</td>
+          <td>{{ record.overtime_hours || 0 }}</td>
+          <td>{{ record.gross_salary || 0 | currency: 'SGD' : 'symbol-narrow' }}</td>
+          <td>{{ record.total_deduction || 0 | currency: 'SGD' : 'symbol-narrow' }}</td>
+          <td>
+            <p-tag
+              [value]="(record.net_salary || 0 | currency: 'SGD' : 'symbol-narrow') || '$0.00'"
+              [severity]="getRecordSeverity(record)"
+            ></p-tag>
+          </td>
+          <td>
+            <strong>{{ record.payment_mode || '-' }}</strong>
+            <small>{{ record.payment_date | date: 'dd MMM yyyy' }}</small>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="10">
+            <div class="empty-state">
+              <i class="pi pi-wallet"></i>
+              <h3>No salary records found</h3>
+              <p>Try changing your search or filters.</p>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-card>
+</section>

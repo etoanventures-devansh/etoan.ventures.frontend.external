@@ -4,6 +4,8 @@ import { LoginComponent } from './pages/login/login.component';
 import { ViewTimecardComponent } from './pages/view-timecard/view-timecard.component';
 import { SalaryEntryComponent } from './pages/salary-entry/salary-entry.component';
 import { TimecardRecordsComponent } from './pages/timecard-records/timecard-records.component';
+import { SalaryRecordsComponent } from './pages/salary-records/salary-records.component';
+import { DashboardComponent } from './pages/dashboard/dashboard.component';
 
 export const routes: Routes = [
     {
@@ -13,6 +15,10 @@ export const routes: Routes = [
     {
         path: '',
         component: LoginComponent
+    },
+    {
+        path: 'dashboard',
+        component: DashboardComponent
     },
     {
         path: 'view-timecard',
@@ -25,5 +31,9 @@ export const routes: Routes = [
     {
         path: 'timecard-records',
         component: TimecardRecordsComponent
+    },
+    {
+        path: 'salary-records',
+        component: SalaryRecordsComponent
     }
 ];

@@ -1,1 +1,59 @@
-<p>dashboard works!</p>
+<section class="dashboard-page">
+  <div class="hero-card">
+    <div>
+      <p-tag value="Etoan Ventures" severity="info"></p-tag>
+      <h1>Operations Dashboard</h1>
+      <p>One place to move between timecards, payroll entry, and salary records.</p>
+    </div>
+
+    <div class="hero-actions">
+      <a pButton label="New Timecard" icon="pi pi-plus" routerLink="/timecard-submission"></a>
+      <a pButton label="Salary Entry" icon="pi pi-wallet" severity="secondary" outlined routerLink="/salary-entry"></a>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <p-card>
+      <small>Active Workers</small>
+      <strong>{{ activeEmployeesCount }}</strong>
+      <span>{{ employees.length }} total workers in employee details</span>
+    </p-card>
+
+    <p-card>
+      <small>Active Sites</small>
+      <strong>{{ activeProjectsCount }}</strong>
+      <span>{{ projectSites.length }} total project sites</span>
+    </p-card>
+
+    <p-card>
+      <small>Salary Records</small>
+      <strong>{{ salaryRecords.length }}</strong>
+      <span>Latest period: {{ latestSalaryPeriod }}</span>
+    </p-card>
+
+    <p-card>
+      <small>Total Net Salary</small>
+      <strong>{{ totalNetSalary | currency: 'SGD' : 'symbol-narrow' }}</strong>
+      <span>Based on generated salary records</span>
+    </p-card>
+  </div>
+
+  <div class="section-heading">
+    <div>
+      <h2>Navigation</h2>
+      <p>Open the main pages from here.</p>
+    </div>
+  </div>
+
+  <div class="navigation-grid">
+    <a class="nav-card" *ngFor="let item of navigationLinks" [routerLink]="item.route">
+      <span class="nav-icon"><i [class]="item.icon"></i></span>
+      <div>
+        <p-tag [value]="item.tag" severity="secondary"></p-tag>
+        <h3>{{ item.title }}</h3>
+        <p>{{ item.description }}</p>
+      </div>
+      <i class="pi pi-arrow-right arrow"></i>
+    </a>
+  </div>
+</section>
