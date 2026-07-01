@@ -92,7 +92,6 @@ export interface EmployeeSalaryRate {
 }
 
 export interface EmployeeSalaryRecords {
-  id: string
   employee_entity_id?: string
   employee_name: string
   identifier_number?: string
@@ -118,8 +117,6 @@ export interface EmployeeSalaryRecords {
   total_deduction: number
   rounding_adjustment: number
   net_salary?: number
-  created_at: string
-  updated_at: string
 }
 
 

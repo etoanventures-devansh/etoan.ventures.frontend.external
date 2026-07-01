@@ -12,7 +12,11 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { EtoanSandboxService } from '../../store/sandbox/etoan-sandbox';
 import { combineLatest, forkJoin, startWith } from 'rxjs';
-import { EmployeeDetails, EmployeeSalaryRate } from '../../models/etoan-models';
+import {
+  EmployeeDetails,
+  EmployeeSalaryRate,
+  EmployeeSalaryRecords,
+} from '../../models/etoan-models';
 import {
   FormBuilder,
   FormGroup,
@@ -22,6 +26,7 @@ import {
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { EtoanHttpService } from '../../services/etoan-http-service.service';
 
 @Component({
   selector: 'app-salary-entry',
@@ -50,7 +55,7 @@ export class SalaryEntryComponent implements OnInit, AfterViewInit {
   workerDetails: { name: string; id: string }[] = [];
   employeeDetails: EmployeeDetails[] | null = [];
   salaryRate: EmployeeSalaryRate[] | null = [];
-  paymentModes = ['Bank Transfer (GIRO)', 'Cash', 'Cheque'];
+  paymentModes = ['BANK TRANSFER', 'CASH', 'CHEQUE'];
   months: string[] = [];
   selectedMonth = '';
   showPage: boolean = false;
@@ -61,6 +66,7 @@ export class SalaryEntryComponent implements OnInit, AfterViewInit {
     private sandbox: EtoanSandboxService,
     private confirmationService: ConfirmationService,
     private messageService: MessageService,
+    private etoanHttp: EtoanHttpService,
   ) {
     this.payrollForm = new FormBuilder().group({
       workerName: [null, Validators.required],
@@ -70,7 +76,6 @@ export class SalaryEntryComponent implements OnInit, AfterViewInit {
       modeOfPayment: ['', Validators.required],
       payslipPeriod: ['', Validators.required],
 
-      paymentMode: ['Bank Transfer (GIRO)', Validators.required],
       paymentDate: [new Date(), Validators.required],
 
       basicPay: [0.0, [Validators.required, Validators.min(0)]],
@@ -257,7 +262,7 @@ export class SalaryEntryComponent implements OnInit, AfterViewInit {
       this.workerDetails =
         workers?.map((worker) => ({
           name: worker.name,
-          id: worker.identifierNumber ?? '',
+          id: worker.entityId ?? '',
         })) ?? [];
       this.salaryRate = salaryRate;
       this.showPage = true;
@@ -296,13 +301,6 @@ export class SalaryEntryComponent implements OnInit, AfterViewInit {
 
   onSaveClicked(event: Event) {
     if (this.payrollForm.invalid) {
-      Object.keys(this.payrollForm.controls).forEach((key) => {
-        const control = this.payrollForm.get(key);
-
-        if (control?.invalid) {
-          console.log(key, control.errors);
-        }
-      });
       this.payrollForm.markAllAsTouched();
       return;
     }
@@ -334,5 +332,87 @@ export class SalaryEntryComponent implements OnInit, AfterViewInit {
     });
   }
 
-  saveSalaryEntry() {}
+  saveSalaryEntry() {
+    const formValue = this.payrollForm.value;
+
+    const salaryRecord: EmployeeSalaryRecords = {
+      employee_entity_id: formValue.workerName.id,
+      employee_name: formValue.workerName.name,
+      identifier_number: formValue.identifierNumber,
+      designation: formValue.designation,
+
+      salary_year: new Date(formValue.paymentDate).getFullYear(),
+      salary_month: new Date(formValue.paymentDate).getMonth() + 1,
+
+      payslip_period_start: this.getPayslipPeriodStart(formValue.payslipPeriod),
+      payslip_period_end: this.getPayslipPeriodEnd(formValue.payslipPeriod),
+
+      payment_date: formValue.paymentDate,
+      payment_mode: formValue.modeOfPayment,
+
+      basic_pay_rate: formValue.basicPay,
+      days_worked: formValue.daysWorked,
+      total_basic_pay: formValue.totalBasicPay,
+
+      overtime_hours: formValue.otHours,
+      overtime_rate: formValue.otRate,
+      total_overtime_pay: formValue.totalOtPay,
+
+      medical_allowance: formValue.medical,
+      transport_allowance: formValue.totalTransport,
+      other_payments: formValue.otherPayments,
+
+      gross_salary: formValue.grossSalary,
+
+      deduction_cash_advance: formValue.cashAdvance,
+      fines: formValue.fines,
+      total_deduction: formValue.totalDeductions,
+
+      rounding_adjustment: formValue.roundingAdjustment,
+      net_salary: formValue.finalNetSalary,
+    };
+
+    this.etoanHttp
+      .postSaveSalaryEntry(salaryRecord)
+      .pipe()
+      .subscribe(({ status, error }) => {
+        if (status === 201) {
+          this.resetForm();
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Successful',
+            detail: 'You have submitted salary entry. Thank you',
+          });
+        }
+        if (error) {
+          if (error.code === '23505') {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Failed',
+              detail: 'Salary Entry already exists. Please contact admin',
+            });
+            return;
+          }
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Failed',
+            detail: 'Salary Entry Unsuccessful.',
+          });
+        }
+      });
+  }
+
+  private getPayslipPeriodStart(period: string): string {
+    const date = new Date(`1 ${period}`);
+    return new Date(date.getFullYear(), date.getMonth(), 1)
+      .toISOString()
+      .split('T')[0];
+  }
+
+  private getPayslipPeriodEnd(period: string): string {
+    const date = new Date(`1 ${period}`);
+    return new Date(date.getFullYear(), date.getMonth() + 1, 0)
+      .toISOString()
+      .split('T')[0];
+  }
 }

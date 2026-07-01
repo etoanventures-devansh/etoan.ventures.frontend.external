@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { SupabaseClientService } from './supabase-client.service';
 import { from, Observable, of } from 'rxjs';
 import { TABLE_NAMES } from '../constants/table-name';
-import { PreviousTimecards, TimecardEntry } from '../models/etoan-models';
+import { EmployeeSalaryRecords, PreviousTimecards, TimecardEntry } from '../models/etoan-models';
 
 @Injectable({
   providedIn: 'root',
@@ -62,6 +62,14 @@ export class EtoanHttpService {
       this.supabaseClient.client
         .from(TABLE_NAMES.EMPLOYEE_SALARY_RECORDS)
         .select('*'),
+    );
+  }
+
+  postSaveSalaryEntry(payload: EmployeeSalaryRecords){
+    return from(
+      this.supabaseClient.client
+        .from(TABLE_NAMES.EMPLOYEE_SALARY_RECORDS)
+        .insert(payload),
     );
   }
 }
