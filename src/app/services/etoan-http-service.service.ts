@@ -39,7 +39,7 @@ export class EtoanHttpService {
     );
   }
 
-   fetchTimecardRecords() {
+  fetchTimecardRecords() {
     return from(
       this.supabaseClient.client
         .from(TABLE_NAMES.TIMECARD_ENTRY)
@@ -49,11 +49,19 @@ export class EtoanHttpService {
     );
   }
 
-  fetchEmployeeSalaryRates(){
+  fetchEmployeeSalaryRates() {
     return from(
       this.supabaseClient.client
-      .from(TABLE_NAMES.EMPLOYEE_SALARY_RATE)
-      .select('*')
-    )
+        .from(TABLE_NAMES.EMPLOYEE_SALARY_RATE)
+        .select('*'),
+    );
+  }
+
+  fetchEmployeeSalaryRecords() {
+    return from(
+      this.supabaseClient.client
+        .from(TABLE_NAMES.EMPLOYEE_SALARY_RECORDS)
+        .select('*'),
+    );
   }
 }

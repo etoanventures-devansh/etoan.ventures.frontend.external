@@ -89,4 +89,36 @@ export interface EmployeeSalaryRate {
   updated_at: string
 }
 
+export interface EmployeeSalaryRecords {
+  id: string
+  employee_entity_id?: string
+  employee_name: string
+  identifier_number?: string
+  designation: string
+  salary_year: number
+  salary_month: number
+  payslip_period_start: string
+  payslip_period_end: string
+  payment_date: string
+  payment_mode: string
+  basic_pay_rate?: number
+  days_worked?: number
+  total_basic_pay?: number
+  overtime_hours: number
+  overtime_rate?: number
+  total_overtime_pay?: number
+  medical_allowance: number
+  transport_allowance: number
+  other_payments: number
+  gross_salary?: number
+  deduction_cash_advance: number
+  fines: number
+  total_deduction: number
+  rounding_adjustment: number
+  net_salary?: number
+  created_at: string
+  updated_at: string
+}
+
+
 export type API_FAILURE_TYPES = 'getEmployeeDetails' | 'getProjectSites' | 'getPreviousTimecards' | 'getEmployeeSalaryRate'
