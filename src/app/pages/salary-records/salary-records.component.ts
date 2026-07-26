@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { DatePickerModule } from 'primeng/datepicker';
+import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { MessageModule } from 'primeng/message';
 import { SelectModule } from 'primeng/select';
@@ -12,6 +13,7 @@ import { TagModule } from 'primeng/tag';
 
 import { EmployeeSalaryRecords } from '../../models/etoan-models';
 import { EtoanSandboxService } from '../../store/sandbox/etoan-sandbox';
+import { EtoanPayslipComponent } from './etoan-payslip/etoan-payslip.component';
 
 interface FilterOption {
   label: string;
@@ -28,11 +30,13 @@ interface FilterOption {
     ButtonModule,
     CardModule,
     DatePickerModule,
+    DialogModule,
     InputTextModule,
     MessageModule,
     SelectModule,
     TableModule,
     TagModule,
+    EtoanPayslipComponent,
   ],
   templateUrl: './salary-records.component.html',
   styleUrl: './salary-records.component.scss',
@@ -66,6 +70,8 @@ export class SalaryRecordsComponent implements OnInit {
 
   loading = false;
   errorMessage = '';
+  selectedRecord: EmployeeSalaryRecords | null = null;
+  payslipVisible = false;
 
   constructor(private sandbox: EtoanSandboxService) {}
 
@@ -93,6 +99,15 @@ export class SalaryRecordsComponent implements OnInit {
 
   loadRecords(): void {
     this.sandbox.getEmployeeSalaryRecords();
+  }
+
+  openPayslip(record: EmployeeSalaryRecords): void {
+    this.selectedRecord = record;
+    this.payslipVisible = true;
+  }
+
+  onPayslipClosed(): void {
+    this.selectedRecord = null;
   }
 
   applyFilters(): void {

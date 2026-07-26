@@ -111,3 +111,13 @@ td small {
     flex-direction: column;
   }
 }
+
+.actions-column {
+  min-width: 112px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+:host ::ng-deep .p-dialog-content {
+  background: #e9eef4;
+}

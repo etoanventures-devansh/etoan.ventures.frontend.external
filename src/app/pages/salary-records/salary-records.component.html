@@ -132,6 +132,7 @@
           <th>Deductions</th>
           <th pSortableColumn="net_salary">Net Salary <p-sortIcon field="net_salary"></p-sortIcon></th>
           <th>Payment</th>
+          <th class="actions-column">Actions</th>
         </tr>
       </ng-template>
 
@@ -163,12 +164,21 @@
             <strong>{{ record.payment_mode || '-' }}</strong>
             <small>{{ record.payment_date | date: 'dd MMM yyyy' }}</small>
           </td>
+          <td class="actions-column">
+            <p-button
+              label="Payslip"
+              icon="pi pi-file-pdf"
+              size="small"
+              [outlined]="true"
+              (onClick)="openPayslip(record)"
+            ></p-button>
+          </td>
         </tr>
       </ng-template>
 
       <ng-template pTemplate="emptymessage">
         <tr>
-          <td colspan="10">
+          <td colspan="11">
             <div class="empty-state">
               <i class="pi pi-wallet"></i>
               <h3>No salary records found</h3>
@@ -180,3 +190,21 @@
     </p-table>
   </p-card>
 </section>
+
+
+<p-dialog
+  header="Payslip Preview"
+  [(visible)]="payslipVisible"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [style]="{ width: 'min(1100px, 96vw)' }"
+  [contentStyle]="{ padding: '0', overflow: 'hidden' }"
+  appendTo="body"
+  (onHide)="onPayslipClosed()"
+>
+  <app-etoan-payslip
+    *ngIf="selectedRecord as record"
+    [record]="record"
+  ></app-etoan-payslip>
+</p-dialog>
