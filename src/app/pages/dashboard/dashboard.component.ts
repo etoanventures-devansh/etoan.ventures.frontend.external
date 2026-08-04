@@ -63,6 +63,13 @@ export class DashboardComponent implements OnInit {
       icon: 'pi pi-wallet',
       tag: 'New',
     },
+    {
+      title: 'Create Invoice',
+      description: 'Generate client invoices and download them as PDF files.',
+      route: '/invoice',
+      icon: 'pi pi-file-pdf',
+      tag: 'Invoice',
+    },
   ];
 
   constructor(private sandbox: EtoanSandboxService) {}

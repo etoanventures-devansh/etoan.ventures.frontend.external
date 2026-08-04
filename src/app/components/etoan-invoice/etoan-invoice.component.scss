@@ -1,168 +1,400 @@
-
-
-body {
-    // max-width: 2481px;
-    // max-height: 3508px;
-    max-width: 960px;
-    margin:auto;
-    padding: 20px 20px 20px 20px;
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
-
-
+:host {
+  display: block;
 }
 
-.company-logo {
-    max-width: 75vw;
-    width: 100%;
-    justify-content: center;
-    display: flex;
-    margin: auto;
+.invoice-page {
+  padding: 1.5rem;
 }
 
-.company-address {
-    color: #8c52ff;
-    font-weight: 600;
-    text-align: center;
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
-    // border-bottom: 1px solid black;
+.page-header {
+  margin-bottom: 1rem;
+
+  h2 {
+    margin: 0;
+  }
+
+  p {
+    color: #64748b;
+    margin: 0.35rem 0 0;
+  }
 }
 
-.flex-row {
-    display: flex;
-    flex-direction: row;
-    gap: 5px;
-    align-items: center;
-    justify-content: center;
-}
-.flex-column{
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+.invoice-form-card {
+  display: block;
+  margin: 0 auto;
+  max-width: 980px;
 }
 
-.flex-row-body{
-    display: flex;
-    flex-direction: row;
-}
-
-
-
-p {
-    margin: 0px;
-}
-
-$spacings: 5, 10, 15, 20, 25, 30, 40;
-
-@each $value in $spacings {
-    .mb-#{$value} {
-        margin-bottom: #{$value}px;
-    }
-
-    .mr-#{$value} {
-        margin-right: #{$value}px;
-    }
-
-    .mt-#{$value} {
-        margin-top: #{$value}px;
-    }
-
-    .ml-#{$value} {
-        margin-left: #{$value}px;
-    }
-
-
-}
-
-.font-semibold {
-    font-weight: 600;
-    font-size: 14px;
-}
-
-.invoice-heading {
-    text-align: center;
-}
-.space-between{
-    justify-content: space-between;
-    display: flex;
-}
-
-$font-size: 12 , 14 ,  16 , 18;
-@each $size in $font-size {
-    .font-size-#{$size}{
-        font-size: #{$size}px;
-    }
-}
-
-$line-height: 5, 10, 15, 20, 25, 30;
-@each $height in $line-height{
-    .lh-#{$height}{
-        line-height: #{$height}px;
-    }
-} 
-
-$gap: 5, 10, 20, 30, 40;
-@each $gap in $gap{
-    .flex-gap-#{$gap}{
-        gap: #{$gap}px;
-    }
-}
-
-hr{
-    border: 0.5px solid black;
-    width: 100%;
-}
-
-@media print {
-    *{
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-    }
-}
-
-// Delete after this. it is for drink menu
-
-.menu-grid {
+.invoice-form {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px 24px;
-
-
+  gap: 1.15rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
-.menu-item {
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+
+  label {
+    color: #334155;
+    font-size: 0.9rem;
+    font-weight: 700;
+  }
+
+  input,
+  p-select,
+  p-datepicker,
+  p-inputnumber {
+    width: 100%;
+  }
+}
+
+.full-width {
+  grid-column: 1 / -1;
+}
+
+.gst-panel {
+  align-items: end;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.8rem;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: minmax(220px, 1fr) 180px 180px;
+  padding: 1rem;
+}
+
+.gst-toggle {
+  align-items: center;
+  display: flex;
+  gap: 0.65rem;
+  padding-bottom: 0.7rem;
+
+  label {
+    color: #334155;
+    cursor: pointer;
+    font-weight: 700;
+  }
+}
+
+.gst-rate {
   min-width: 0;
 }
 
-.item-name {
-  font-weight: 600;
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
-  margin-bottom: 4px;
-}
-
-.ingredients {
-  font-size: 14px;
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
-  color: #666;
-  padding-left: 14px;
-  max-width: 250px;
-  font-style: italic;
-}
-
-.row {
+.total-preview {
+  align-items: flex-end;
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  padding-bottom: 0.35rem;
+
+  span {
+    color: #64748b;
+    font-size: 0.8rem;
+  }
+
+  strong {
+    font-size: 1.35rem;
+    margin-top: 0.2rem;
+  }
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.invoice-actions {
   align-items: center;
+  background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
 }
 
-.price {
-  font-weight: 600;
-  white-space: nowrap;
-font-family: Verdana, Geneva, Tahoma, sans-serif;
+.action-copy {
+  display: flex;
+  flex-direction: column;
+
+  span {
+    color: #64748b;
+    font-size: 0.85rem;
+    margin-top: 0.2rem;
+  }
+}
+
+.action-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+p-message {
+  display: block;
+  margin: 0.75rem 1.25rem 0;
+}
+
+.invoice-form p-message {
+  margin: 0;
+}
+
+.invoice-scroll-container {
+  background: #e9eef4;
+  overflow: auto;
+  padding: 1.5rem;
+}
+
+.invoice-sheet {
+  background: #fff;
+  box-shadow: 0 8px 30px rgba(15, 23, 42, 0.14);
+  box-sizing: border-box;
+  color: #111827;
+  display: flex;
+  flex-direction: column;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  margin: 0 auto;
+  min-height: 1123px;
+  padding: 32px 36px 24px;
+  width: 794px;
+
+  * {
+    box-sizing: border-box;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+  }
+
+  p {
+    margin: 0;
+  }
+}
+
+.invoice-brand {
+  text-align: center;
+
+  h1 {
+    font-size: 18px;
+    margin: 15px 0 22px;
+  }
+}
+
+.company-logo {
+  display: block;
+  height: auto;
+  margin: 0 auto;
+  max-width: 650px;
+  object-fit: contain;
+  width: 100%;
+}
+
+.invoice-meta {
+  display: flex;
+  font-size: 12px;
+  justify-content: space-between;
+  margin-bottom: 32px;
+}
+
+.customer-address,
+.invoice-identifiers {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.invoice-identifiers {
+  min-width: 210px;
+}
+
+.font-semibold {
+  font-weight: 700;
+}
+
+.invoice-table {
+  border-collapse: collapse;
+  font-size: 12px;
+  table-layout: fixed;
+  width: 100%;
+
+  th,
+  td {
+    border: 1px solid #111827;
+    padding: 9px;
+  }
+
+  th {
+    height: 62px;
+    text-align: center;
+  }
+}
+
+.serial-column {
+  width: 64px;
+}
+
+.amount-column {
+  width: 140px;
+}
+
+.work-row {
+  height: 175px;
+  vertical-align: top;
+
+  > td:first-child {
+    text-align: center;
+  }
+}
+
+.description-cell {
+  line-height: 1.55;
+
+  .project-site {
+    font-weight: 700;
+    margin: 9px 0 16px;
+  }
+
+  .gst-description {
+    margin-top: 18px;
+  }
+}
+
+.amount-cell {
+  text-align: center;
+
+  .gst-amount {
+    margin-top: 101px;
+  }
+}
+
+.net-row {
+  height: 68px;
+  text-align: center;
 
 }
-.body-color{
-    height: 100%;
-    background: #57C785;
-background: linear-gradient(90deg, rgba(87, 199, 133, 1) 15%, rgba(237, 221, 83, 1) 100%);
+
+.payment-note {
+  font-size: 12px;
+  line-height: 1.85;
+  margin-top: 30px !important;
 }
 
+.payment-signature-row {
+  align-items: flex-end;
+  display: flex;
+  font-size: 12px;
+  justify-content: space-between;
+  margin-top: 22px;
+}
+
+.bank-details {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+}
+
+.paynow-qr {
+  height: 66px;
+  object-fit: contain;
+  width: 66px;
+}
+
+.signature-block {
+  text-align: center;
+  min-width: 235px;
+}
+
+.signature-images {
+  height: 95px;
+  margin: 0 auto 7px;
+  position: relative;
+  min-width: 180px;
+}
+
+.signature-image {
+  height: 60px;
+  left: 13px;
+  object-fit: contain;
+  position: absolute;
+  top: 27px;
+  width: 110px;
+}
+
+.stamp-image {
+  bottom: 0;
+  height: 88px;
+  object-fit: contain;
+  position: absolute;
+  right: 3px;
+  width: 88px;
+  z-index: 1;
+}
+
+.signature-line {
+  border-top: 1px solid #111827;
+  padding-top: 7px;
+}
+
+.invoice-footer {
+  color: #8c52ff;
+  font-size: 12px;
+  font-weight: 700;
+  margin-top: auto;
+  padding-top: 20px;
+  text-align: center;
+}
+
+.footer-contact-row {
+  align-items: center;
+  display: flex;
+  gap: 18px;
+  justify-content: center;
+  margin-top: 7px;
+}
+
+.contact-item {
+  align-items: center;
+  display: inline-flex;
+  gap: 5px;
+
+  img {
+    height: 16px;
+    object-fit: contain;
+    width: 16px;
+  }
+}
+
+@media (max-width: 900px) {
+  .invoice-actions {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .invoice-scroll-container {
+    padding: 0.75rem;
+  }
+}
+
+@media (max-width: 720px) {
+  .invoice-form {
+    grid-template-columns: 1fr;
+  }
+
+  .full-width {
+    grid-column: auto;
+  }
+
+  .gst-panel {
+    align-items: stretch;
+    grid-template-columns: 1fr;
+  }
+
+  .total-preview {
+    align-items: flex-start;
+  }
+}
+
+@media print {
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

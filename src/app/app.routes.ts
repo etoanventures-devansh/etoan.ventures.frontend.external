@@ -6,6 +6,7 @@ import { SalaryEntryComponent } from './pages/salary-entry/salary-entry.componen
 import { TimecardRecordsComponent } from './pages/timecard-records/timecard-records.component';
 import { SalaryRecordsComponent } from './pages/salary-records/salary-records.component';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
+import { EtoanInvoiceComponent } from './components/etoan-invoice/etoan-invoice.component';
 
 export const routes: Routes = [
     {
@@ -35,5 +36,9 @@ export const routes: Routes = [
     {
         path: 'salary-records',
         component: SalaryRecordsComponent
+    },
+    {
+        path: 'invoice',
+        component: EtoanInvoiceComponent
     }
 ];

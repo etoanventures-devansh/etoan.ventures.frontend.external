@@ -1,500 +1,337 @@
-<ng-template #ietPteLtd>
-  <body>
-    <img
-      class="company-logo"
-      src="assets/images/Etoan_Ventures_No_Background.png"
-    />
-
-    <h3 class="mb-20 invoice-heading"><u>INVOICE</u></h3>
-
-    <div class="space-between font-size-12 mb-40">
-      <div class="flex-column">
-        <p class="font-semibold font-size-12">CUSTOMER NAME & ADDRESS</p>
-        <p class="font-semibold font-size-12">ATTENTION: ACCOUNTS DEPARTMENT</p>
-        <p>IET PTE LTD</p>
-        <p>BLK 212 HOUGANG STREET 21</p>
-        <p>#04-345</p>
-        <p class="font-semibold font-size-12">SINGAPORE 530212</p>
-      </div>
-      <div class="flex-column">
-        <p class="font-semibold font-size-12">Invoice Date: 03/08/2026</p>
-        <p class="font-semibold font-size-12">Invoice No: EV 1079/2026</p>
-      </div>
+<section class="invoice-page">
+  <div class="page-header">
+    <div>
+      <h2>Create Invoice</h2>
+      <p>Select a client, enter the invoice details, and preview the final PDF before downloading it.</p>
     </div>
+  </div>
 
-    <table
-      border="1"
-      cellspacing="0"
-      cellpadding="8"
-      style="width: 100%; border-collapse: collapse; text-align: center"
-      class="font-size-12 mb-40"
-    >
-      <thead>
-        <tr style="height: 80px">
-          <th>S.No</th>
-          <th>Description Of Work</th>
-          <th>AMOUNT S$</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr style="height: 160px">
-          <td style="align-items: start">1</td>
-          <td style="text-align: left">
-            Being Sub Contract of Skilled Work carried at your project <br />
-            <ul>
-              <li>Jurong</li>
-            </ul>
-            Claim for month of JULY 2026<br /><br />
-            GST 9%
-          </td>
-          <td>$2970.00<br /><br /><br /><br /><br /><br /><br />Nil</td>
-        </tr>
-        <tr style="height: 80px">
-          <td colspan="2" style="border: none">
-            <span class="font-semibold font-size-12">Net Claim: </span>
-            Singapore Dollars Two Thousand Nine Hundred Seventy and Zero
-            Cents
-          </td>
-          <td class="font-semibold font-size-12">$2970.00</td>
-        </tr>
-      </tbody>
-    </table>
+  <p-card class="invoice-form-card">
+    <form class="invoice-form" (ngSubmit)="openInvoicePreview()">
+      <div class="field full-width">
+        <label for="client">Client</label>
+        <p-select
+          inputId="client"
+          name="client"
+          [options]="clients"
+          optionLabel="label"
+          optionValue="key"
+          [(ngModel)]="invoice.client"
+          (ngModelChange)="onClientChanged()"
+          placeholder="Select client"
+          appendTo="body"
+        ></p-select>
+      </div>
 
-    <p class="font-size-12 mb-20" style="line-height: 24px">
-      Payment can be made by the mode of Internet Banking. Cheques should be
-      crossed and made payable to
-      <span class="font-semibold font-size-12">Etoan Ventures Pte Ltd</span>.
-      Please find the bank details below for your reference
-    </p>
-    <div class="space-between font-size-12" style="align-items: center">
-      <div class="flex-column flex-gap-20">
-        <p>
-          <span class="font-semibold font-size-12">Bank Name:</span> DBS Bank
-        </p>
-        <p>
-          <span class="font-semibold font-size-12">Account No:</span> 0721168952
-        </p>
-        <p>
-          <span class="font-semibold font-size-12">Swift Code:</span> DBSSGSG
-        </p>
-        <p>
-          <span class="font-semibold font-size-12">PayNow ID:</span> 202420319N
-        </p>
-        <img
-          src="../assets/images/Etoan_Ventures_PayNow_QR.jpeg"
-          height="60"
-          width="60"
+      <div class="field">
+        <label for="invoiceNumber">Invoice Number</label>
+        <input
+          id="invoiceNumber"
+          name="invoiceNumber"
+          pInputText
+          type="text"
+          placeholder="Example: EV 1082/2026"
+          [(ngModel)]="invoice.invoiceNumber"
         />
       </div>
-      <div class="flex-column">
-        <!-- <p class="font-semibold font-size-12 mb-20">Etoan Ventures Pte Ltd</p> -->
-        <div class="flex-row-body space-between" style="align-items: center">
-          <img
-            src="../assets/images/Devansh_Signature.jpeg"
-            height="40"
-            width="80"
-          />
-          <img src="../assets/images/Etoan Stamp.jpg" height="80" width="80" />
-        </div>
-        <hr />
-        <p class="font-size-12">Authorized Signature</p>
-      </div>
-    </div>
-  </body>
 
-  <footer>
-    <div class="company-address font-size-14">
-      <p class="mb-5">10 Jalan Besar, #15-01, Sim Lim Tower Singapore 208787</p>
-      <div class="flex-row mb-20">
-        <div class="flex-row mr-5">
-          <p>Reg No:</p>
-          <p>202420319N</p>
+      <div class="field">
+        <label for="invoiceDate">Invoice Date</label>
+        <p-datepicker
+          inputId="invoiceDate"
+          name="invoiceDate"
+          [(ngModel)]="invoice.invoiceDate"
+          dateFormat="dd/mm/yy"
+          [showIcon]="true"
+          [readonlyInput]="true"
+          appendTo="body"
+        ></p-datepicker>
+      </div>
+
+      <div class="field">
+        <label for="claimMonth">Claim Month</label>
+        <p-datepicker
+          inputId="claimMonth"
+          name="claimMonth"
+          [(ngModel)]="invoice.claimMonth"
+          view="month"
+          dateFormat="MM yy"
+          [showIcon]="true"
+          [readonlyInput]="true"
+          appendTo="body"
+        ></p-datepicker>
+      </div>
+
+      <div class="field">
+        <label for="amount">Claim Amount</label>
+        <p-inputNumber
+          inputId="amount"
+          name="amount"
+          [(ngModel)]="invoice.amount"
+          mode="currency"
+          currency="SGD"
+          locale="en-SG"
+          [min]="0"
+          [minFractionDigits]="2"
+          [maxFractionDigits]="2"
+          placeholder="S$0.00"
+        ></p-inputNumber>
+      </div>
+
+      <div class="field full-width">
+        <label for="projectSite">Project Site</label>
+        <input
+          id="projectSite"
+          name="projectSite"
+          pInputText
+          type="text"
+          placeholder="Enter project site"
+          [(ngModel)]="invoice.projectSite"
+        />
+      </div>
+
+      <div class="gst-panel full-width">
+        <div class="field gst-rate">
+          <label for="gstRate">GST Rate</label>
+          <p-inputNumber
+            inputId="gstRate"
+            name="gstRate"
+            [(ngModel)]="invoice.gstRate"
+            suffix="%"
+            [min]="0"
+            [max]="100"
+            [minFractionDigits]="0"
+            [maxFractionDigits]="2"
+            [disabled]="!invoice.applyGst"
+          ></p-inputNumber>
         </div>
-        <div class="flex-row">
-          <img src="assets/images/mail-icon.svg" width="20" height="20" />
-          <p>admin&#64;etoanventures.com</p>
-        </div>
-        <div class="flex-row">
-          <img src="assets/images/phone-icon.svg" width="20" height="20" />
-          <p>(65) 8648 1483</p>
+
+        <div class="total-preview">
+          <span>Net Claim</span>
+          <strong>{{ netClaim | currency: 'SGD' : 'symbol-narrow' }}</strong>
         </div>
       </div>
-    </div>
-  </footer>
+
+      <p-message
+        *ngIf="validationMessage"
+        class="full-width"
+        severity="error"
+        [text]="validationMessage"
+        icon="pi pi-times-circle"
+      ></p-message>
+
+      <div class="form-actions full-width">
+        <p-button
+          type="submit"
+          label="Create Invoice"
+          icon="pi pi-file-pdf"
+        ></p-button>
+      </div>
+    </form>
+  </p-card>
+</section>
+
+<ng-template #ietPteLtd>
+  <ng-container *ngTemplateOutlet="invoiceLayout"></ng-container>
 </ng-template>
-
 
 <ng-template #markpointEngineering>
-  <body>
-    <img
-      class="company-logo"
-      src="assets/images/Etoan_Ventures_No_Background.png"
-    />
-
-    <h3 class="mb-20 invoice-heading"><u>INVOICE</u></h3>
-
-    <div class="space-between font-size-12 mb-40">
-      <div class="flex-column">
-        <p class="font-semibold font-size-12">CUSTOMER NAME & ADDRESS</p>
-        <p class="font-semibold font-size-12">ATTENTION: HR DEPARTMENT</p>
-        <p>MARKPOINT ENGINEERING PTE LTD</p>
-        <p>10 ADMIRALTY STREET</p>
-        <p>#02-27, NORTH LINK BUILDING</p>
-        <p class="font-semibold font-size-12">SINGAPORE 757695</p>
-      </div>
-      <div class="flex-column">
-        <p class="font-semibold font-size-12">Invoice Date: 15/07/2026</p>
-        <p class="font-semibold font-size-12">Invoice No: EV 1073/2026</p>
-      </div>
-    </div>
-
-    <table
-      border="1"
-      cellspacing="0"
-      cellpadding="8"
-      style="width: 100%; border-collapse: collapse; text-align: center"
-      class="font-size-12 mb-40"
-    >
-      <thead>
-        <tr style="height: 80px">
-          <th>S.No</th>
-          <th>Description Of Work</th>
-          <th>AMOUNT S$</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr style="height: 160px">
-          <td style="align-items: start">1</td>
-          <td style="text-align: left">
-            Being Sub Contract of Skilled Work carried at your project Oriental Plaza<br /><br/>
-            Claim for month of MAY 2026<br /><br />
-            GST 9%
-          </td>
-          <td>$12024.00<br /><br /><br /><br /><br /><br /><br />Nil</td>
-        </tr>
-        <tr style="height: 80px">
-          <td colspan="2" style="border: none">
-            <span class="font-semibold font-size-12">Net Claim: </span>
-            Singapore Dollars Twelve Thousand Twenty Four and Zero
-            Cents
-          </td>
-          <td class="font-semibold font-size-12">$12024.00</td>
-        </tr>
-      </tbody>
-    </table>
-
-    <p class="font-size-12 mb-20" style="line-height: 24px">
-      Payment can be made by the mode of Internet Banking. Cheques should be
-      crossed and made payable to
-      <span class="font-semibold font-size-12">Etoan Ventures Pte Ltd</span>.
-      Please find the bank details below for your reference
-    </p>
-    <div class="space-between font-size-12" style="align-items: center">
-      <div class="flex-column flex-gap-20">
-        <p>
-          <span class="font-semibold font-size-12">Bank Name:</span> DBS Bank
-        </p>
-        <p>
-          <span class="font-semibold font-size-12">Account No:</span> 0721168952
-        </p>
-        <p>
-          <span class="font-semibold font-size-12">Swift Code:</span> DBSSGSG
-        </p>
-        <p>
-          <span class="font-semibold font-size-12">PayNow ID:</span> 202420319N
-        </p>
-        <img
-          src="../assets/images/Etoan_Ventures_PayNow_QR.jpeg"
-          height="60"
-          width="60"
-        />
-      </div>
-      <div class="flex-column">
-        <!-- <p class="font-semibold font-size-12 mb-20">Etoan Ventures Pte Ltd</p> -->
-        <div class="flex-row-body space-between" style="align-items: center">
-          <img
-            src="../assets/images/Devansh_Signature.jpeg"
-            height="40"
-            width="80"
-          />
-          <img src="../assets/images/Etoan Stamp.jpg" height="80" width="80" />
-        </div>
-        <hr />
-        <p class="font-size-12">Authorized Signature</p>
-      </div>
-    </div>
-  </body>
-
-  <footer>
-    <div class="company-address font-size-14">
-      <p class="mb-5">10 Jalan Besar, #15-01, Sim Lim Tower Singapore 208787</p>
-      <div class="flex-row mb-20">
-        <div class="flex-row mr-5">
-          <p>Reg No:</p>
-          <p>202420319N</p>
-        </div>
-        <div class="flex-row">
-          <img src="assets/images/mail-icon.svg" width="20" height="20" />
-          <p>admin&#64;etoanventures.com</p>
-        </div>
-        <div class="flex-row">
-          <img src="assets/images/phone-icon.svg" width="20" height="20" />
-          <p>(65) 8648 1483</p>
-        </div>
-      </div>
-    </div>
-  </footer>
-
-
+  <ng-container *ngTemplateOutlet="invoiceLayout"></ng-container>
 </ng-template>
-
 
 <ng-template #infinityPteLtd>
-  <body>
-    <img
-      class="company-logo"
-      src="assets/images/Etoan_Ventures_No_Background.png"
-    />
-
-    <h3 class="mb-20 invoice-heading"><u>INVOICE</u></h3>
-
-    <div class="space-between font-size-12 mb-40">
-      <div class="flex-column">
-        <p class="font-semibold font-size-12">CUSTOMER NAME & ADDRESS</p>
-        <p class="font-semibold font-size-12">ATTENTION: ACCOUNTS DEPARTMENT</p>
-        <p>INFINITY BROTHERS PTE LTD</p>
-        <p>BLK 146 BEDOK RESERVOIR ROAD</p>
-        <p>#05-1643</p>
-        <p class="font-semibold font-size-12">SINGAPORE 470146</p>
-      </div>
-      <div class="flex-column">
-        <p class="font-semibold font-size-12">Invoice Date: 03/08/2026</p>
-        <p class="font-semibold font-size-12">Invoice No: EV 1080/2026</p>
-      </div>
-    </div>
-
-    <table
-      border="1"
-      cellspacing="0"
-      cellpadding="8"
-      style="width: 100%; border-collapse: collapse; text-align: center"
-      class="font-size-12 mb-40"
-    >
-      <thead>
-        <tr style="height: 80px">
-          <th>S.No</th>
-          <th>Description Of Work</th>
-          <th>AMOUNT S$</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr style="height: 160px">
-          <td style="align-items: start">1</td>
-          <td style="text-align: left">
-            Being Sub Contract of Skilled Work carried at your project Element N105 <br /><br/>
-            Claim for month of July 2026<br /><br />
-            GST 9%
-          </td>
-          <td>$6101.30<br /><br /><br /><br /><br /><br /><br />Nil</td>
-        </tr>
-        <tr style="height: 80px">
-          <td colspan="2" style="border: none">
-            <span class="font-semibold font-size-12">Net Claim: </span>
-            Singapore Dollars Six Thousand One Hundred One and Thirty
-            Cents
-          </td>
-          <td class="font-semibold font-size-12">$6101.30</td>
-        </tr>
-      </tbody>
-    </table>
-
-    <p class="font-size-12 mb-20" style="line-height: 24px">
-      Payment can be made by the mode of Internet Banking. Cheques should be
-      crossed and made payable to
-      <span class="font-semibold font-size-12">Etoan Ventures Pte Ltd</span>.
-      Please find the bank details below for your reference
-    </p>
-    <div class="space-between font-size-12" style="align-items: center">
-      <div class="flex-column flex-gap-20">
-        <p>
-          <span class="font-semibold font-size-12">Bank Name:</span> DBS Bank
-        </p>
-        <p>
-          <span class="font-semibold font-size-12">Account No:</span> 0721168952
-        </p>
-        <p>
-          <span class="font-semibold font-size-12">Swift Code:</span> DBSSGSG
-        </p>
-        <p>
-          <span class="font-semibold font-size-12">PayNow ID:</span> 202420319N
-        </p>
-        <img
-          src="../assets/images/Etoan_Ventures_PayNow_QR.jpeg"
-          height="60"
-          width="60"
-        />
-      </div>
-      <div class="flex-column">
-        <!-- <p class="font-semibold font-size-12 mb-20">Etoan Ventures Pte Ltd</p> -->
-        <div class="flex-row-body space-between" style="align-items: center">
-          <img
-            src="../assets/images/Devansh_Signature.jpeg"
-            height="40"
-            width="80"
-          />
-          <img src="../assets/images/Etoan Stamp.jpg" height="80" width="80" />
-        </div>
-        <hr />
-        <p class="font-size-12">Authorized Signature</p>
-      </div>
-    </div>
-  </body>
-
-  <footer>
-    <div class="company-address font-size-14">
-      <p class="mb-5">10 Jalan Besar, #15-01, Sim Lim Tower Singapore 208787</p>
-      <div class="flex-row mb-20">
-        <div class="flex-row mr-5">
-          <p>Reg No:</p>
-          <p>202420319N</p>
-        </div>
-        <div class="flex-row">
-          <img src="assets/images/mail-icon.svg" width="20" height="20" />
-          <p>admin&#64;etoanventures.com</p>
-        </div>
-        <div class="flex-row">
-          <img src="assets/images/phone-icon.svg" width="20" height="20" />
-          <p>(65) 8648 1483</p>
-        </div>
-      </div>
-    </div>
-  </footer>
+  <ng-container *ngTemplateOutlet="invoiceLayout"></ng-container>
 </ng-template>
-
 
 <ng-template #mxtEnggControl>
-  <body>
+  <ng-container *ngTemplateOutlet="invoiceLayout"></ng-container>
+</ng-template>
+
+<ng-template #invoiceLayout>
+  <header class="invoice-brand">
     <img
       class="company-logo"
       src="assets/images/Etoan_Ventures_No_Background.png"
+      alt="Etoan Ventures"
     />
+    <h1><u>INVOICE</u></h1>
+  </header>
 
-    <h3 class="mb-20 invoice-heading"><u>INVOICE</u></h3>
-
-    <div class="space-between font-size-12 mb-40">
-      <div class="flex-column">
-        <p class="font-semibold font-size-12">CUSTOMER NAME & ADDRESS</p>
-        <p class="font-semibold font-size-12">ATTENTION: HR DEPARTMENT</p>
-        <p>MXT ENGG & CONTROLS</p>
-        <p>15 MARSILING LANE</p>
-        <p>#11-157, MARSILING GARDENS</p>
-        <p class="font-semibold font-size-12">SINGAPORE 730015</p>
-      </div>
-      <div class="flex-column">
-        <p class="font-semibold font-size-12">Invoice Date: 04/08/2026</p>
-        <p class="font-semibold font-size-12">Invoice No: EV 1081/2026</p>
-      </div>
+  <section class="invoice-meta">
+    <div class="customer-address">
+      <p class="font-semibold">CUSTOMER NAME &amp; ADDRESS</p>
+      <p class="font-semibold">ATTENTION: {{ selectedClient.attention }}</p>
+      <p>{{ selectedClient.companyName }}</p>
+      <p
+        *ngFor="let line of selectedClient.addressLines; let last = last"
+        [class.font-semibold]="last"
+      >
+        {{ line }}
+      </p>
     </div>
 
-    <table
-      border="1"
-      cellspacing="0"
-      cellpadding="8"
-      style="width: 100%; border-collapse: collapse; text-align: center"
-      class="font-size-12 mb-40"
-    >
-      <thead>
-        <tr style="height: 80px">
-          <th>S.No</th>
-          <th>Description Of Work</th>
-          <th>AMOUNT S$</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr style="height: 160px">
-          <td style="align-items: start">1</td>
-          <td style="text-align: left">
-            Being Sub Contract of Skilled Work carried at your project site Facebook at 15A Sunview Way <br /><br/>
-            Claim for month of July 2026<br /><br />
-            GST 9%
-          </td>
-          <td>$3450.00<br /><br /><br /><br /><br /><br /><br />Nil</td>
-        </tr>
-        <tr style="height: 80px">
-          <td colspan="2" style="border: none">
-            <span class="font-semibold font-size-12">Net Claim: </span>
-            Singapore Dollars Three Thousand Four Fifty and Zero
-            Cents
-          </td>
-          <td class="font-semibold font-size-12">$3450.00</td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="invoice-identifiers">
+      <p class="font-semibold">Invoice Date: {{ invoiceDateLabel }}</p>
+      <p class="font-semibold">Invoice No: {{ invoice.invoiceNumber }}</p>
+    </div>
+  </section>
 
-    <p class="font-size-12 mb-20" style="line-height: 24px">
-      Payment can be made by the mode of Internet Banking. Cheques should be
-      crossed and made payable to
-      <span class="font-semibold font-size-12">Etoan Ventures Pte Ltd</span>.
-      Please find the bank details below for your reference
-    </p>
-    <div class="space-between font-size-12" style="align-items: center">
-      <div class="flex-column flex-gap-20">
-        <p>
-          <span class="font-semibold font-size-12">Bank Name:</span> DBS Bank
-        </p>
-        <p>
-          <span class="font-semibold font-size-12">Account No:</span> 0721168952
-        </p>
-        <p>
-          <span class="font-semibold font-size-12">Swift Code:</span> DBSSGSG
-        </p>
-        <p>
-          <span class="font-semibold font-size-12">PayNow ID:</span> 202420319N
-        </p>
+  <table class="invoice-table">
+    <thead>
+      <tr>
+        <th class="serial-column">S.No</th>
+        <th>Description Of Work</th>
+        <th class="amount-column">AMOUNT S$</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="work-row">
+        <td>1</td>
+        <td class="description-cell">
+          <p>Being Sub Contract of Skilled Work carried out at your project</p>
+          <p class="project-site">{{ invoice.projectSite }}</p>
+          <p>Claim for month of {{ claimMonthLabel }}</p>
+          <p class="gst-description">GST {{ invoice.gstRate | number: '1.0-2' }}%</p>
+        </td>
+        <td class="amount-cell">
+          <p>${{ subtotal | number: '1.2-2' }}</p>
+          <p class="gst-amount" *ngIf="invoice.applyGst">
+            ${{ gstAmount | number: '1.2-2' }}
+          </p>
+          <p class="gst-amount" *ngIf="!invoice.applyGst">Nil</p>
+        </td>
+      </tr>
+      <tr class="net-row">
+        <td colspan="2">
+          <span class="font-semibold">Net Claim: </span>
+          {{ amountInWords }}
+        </td>
+        <td class="font-semibold">${{ netClaim | number: '1.2-2' }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p class="payment-note">
+    Payment can be made by the mode of Internet Banking. Cheques should be crossed and made payable to
+    <span class="font-semibold">Etoan Ventures Pte Ltd</span>. Please find the bank details below for your reference.
+  </p>
+
+  <section class="payment-signature-row">
+    <div class="bank-details">
+      <p><span class="font-semibold">Bank Name:</span> DBS Bank</p>
+      <p><span class="font-semibold">Account No:</span> 0721168952</p>
+      <p><span class="font-semibold">Swift Code:</span> DBSSGSG</p>
+      <p><span class="font-semibold">PayNow ID:</span> 202420319N</p>
+      <img
+        class="paynow-qr"
+        src="assets/images/Etoan_Ventures_PayNow_QR.jpeg"
+        alt="Etoan Ventures PayNow QR"
+      />
+    </div>
+
+    <div class="signature-block">
+      <div class="signature-images">
         <img
-          src="../assets/images/Etoan_Ventures_PayNow_QR.jpeg"
-          height="60"
-          width="60"
+          class="signature-image"
+          src="assets/images/Devansh_Signature_Improved.png"
+          alt="Authorized signature"
+        />
+        <img
+          class="stamp-image"
+          src="assets/images/Etoan Stamp.jpg"
+          alt="Company stamp"
         />
       </div>
-      <div class="flex-column">
-        <!-- <p class="font-semibold font-size-12 mb-20">Etoan Ventures Pte Ltd</p> -->
-        <div class="flex-row-body space-between" style="align-items: center">
-          <img
-            src="../assets/images/Devansh_Signature.jpeg"
-            height="40"
-            width="80"
-          />
-          <img src="../assets/images/Etoan Stamp.jpg" height="80" width="80" />
-        </div>
-        <hr />
-        <p class="font-size-12">Authorized Signature</p>
-      </div>
+      <div class="signature-line">Authorized Signature</div>
     </div>
-  </body>
+  </section>
 
-  <footer>
-    <div class="company-address font-size-14">
-      <p class="mb-5">10 Jalan Besar, #15-01, Sim Lim Tower Singapore 208787</p>
-      <div class="flex-row mb-20">
-        <div class="flex-row mr-5">
-          <p>Reg No:</p>
-          <p>202420319N</p>
-        </div>
-        <div class="flex-row">
-          <img src="assets/images/mail-icon.svg" width="20" height="20" />
-          <p>admin&#64;etoanventures.com</p>
-        </div>
-        <div class="flex-row">
-          <img src="assets/images/phone-icon.svg" width="20" height="20" />
-          <p>(65) 8648 1483</p>
-        </div>
-      </div>
+  <footer class="invoice-footer">
+    <p>10 Jalan Besar, #15-01, Sim Lim Tower Singapore 208787</p>
+    <div class="footer-contact-row">
+      <span>Reg No: 202420319N</span>
+      <span class="contact-item">
+        <img src="assets/images/mail-icon.svg" alt="" />
+        admin&#64;etoanventures.com
+      </span>
+      <span class="contact-item">
+        <img src="assets/images/phone-icon.svg" alt="" />
+        (65) 8648 1483
+      </span>
     </div>
   </footer>
 </ng-template>
 
+<p-dialog
+  header="Invoice Preview"
+  [(visible)]="previewVisible"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [style]="{ width: 'min(1100px, 96vw)' }"
+  [contentStyle]="{ padding: '0', overflow: 'hidden' }"
+  appendTo="body"
+  (onHide)="closePreview()"
+>
+  <div class="invoice-actions">
+    <div class="action-copy">
+      <strong>{{ invoice.invoiceNumber }}</strong>
+      <span>{{ selectedClient.companyName }} · {{ claimMonthLabel }}</span>
+    </div>
 
-<ng-container *ngTemplateOutlet="mxtEnggControl"></ng-container>
+    <div class="action-buttons">
+      <p-button
+        label="Open PDF"
+        icon="pi pi-print"
+        severity="secondary"
+        [outlined]="true"
+        [disabled]="isGenerating"
+        (onClick)="printInvoice()"
+      ></p-button>
+      <p-button
+        label="Download PDF"
+        icon="pi pi-download"
+        [loading]="isGenerating"
+        (onClick)="downloadPdf()"
+      ></p-button>
+      <p-button
+        label="Share PDF"
+        icon="pi pi-share-alt"
+        severity="success"
+        [disabled]="isGenerating"
+        (onClick)="sharePdf()"
+      ></p-button>
+    </div>
+  </div>
 
+  <p-message
+    *ngIf="actionMessage"
+    severity="success"
+    [text]="actionMessage"
+    icon="pi pi-check-circle"
+  ></p-message>
+  <p-message
+    *ngIf="actionError"
+    severity="error"
+    [text]="actionError"
+    icon="pi pi-times-circle"
+  ></p-message>
 
+  <div class="invoice-scroll-container">
+    <article #invoiceDocument class="invoice-sheet">
+      <ng-container [ngSwitch]="invoice.client">
+        <ng-container *ngSwitchCase="'iet'" [ngTemplateOutlet]="ietPteLtd"></ng-container>
+        <ng-container
+          *ngSwitchCase="'markpoint'"
+          [ngTemplateOutlet]="markpointEngineering"
+        ></ng-container>
+        <ng-container
+          *ngSwitchCase="'infinity'"
+          [ngTemplateOutlet]="infinityPteLtd"
+        ></ng-container>
+        <ng-container *ngSwitchCase="'mxt'" [ngTemplateOutlet]="mxtEnggControl"></ng-container>
+        <ng-container *ngSwitchDefault [ngTemplateOutlet]="ietPteLtd"></ng-container>
+      </ng-container>
+    </article>
+  </div>
+</p-dialog>
