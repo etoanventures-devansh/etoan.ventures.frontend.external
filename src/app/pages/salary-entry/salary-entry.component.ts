@@ -352,11 +352,9 @@ export class SalaryEntryComponent implements OnInit, AfterViewInit {
 
       basic_pay_rate: formValue.basicPay,
       days_worked: formValue.daysWorked,
-      total_basic_pay: formValue.totalBasicPay,
 
       overtime_hours: formValue.otHours,
       overtime_rate: formValue.otRate,
-      total_overtime_pay: formValue.totalOtPay,
 
       medical_allowance: formValue.medical,
       transport_allowance: formValue.totalTransport,
@@ -366,10 +364,8 @@ export class SalaryEntryComponent implements OnInit, AfterViewInit {
 
       deduction_cash_advance: formValue.cashAdvance,
       fines: formValue.fines,
-      total_deduction: formValue.totalDeductions,
 
       rounding_adjustment: formValue.roundingAdjustment,
-      net_salary: formValue.finalNetSalary,
     };
 
     this.etoanHttp

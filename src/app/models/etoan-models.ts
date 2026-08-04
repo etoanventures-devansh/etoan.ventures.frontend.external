@@ -114,7 +114,7 @@ export interface EmployeeSalaryRecords {
   gross_salary?: number
   deduction_cash_advance: number
   fines: number
-  total_deduction: number
+  total_deduction?: number
   rounding_adjustment: number
   net_salary?: number
 }

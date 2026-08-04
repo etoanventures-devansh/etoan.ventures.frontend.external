@@ -1,0 +1,168 @@
+
+
+body {
+    // max-width: 2481px;
+    // max-height: 3508px;
+    max-width: 960px;
+    margin:auto;
+    padding: 20px 20px 20px 20px;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+
+
+}
+
+.company-logo {
+    max-width: 75vw;
+    width: 100%;
+    justify-content: center;
+    display: flex;
+    margin: auto;
+}
+
+.company-address {
+    color: #8c52ff;
+    font-weight: 600;
+    text-align: center;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    // border-bottom: 1px solid black;
+}
+
+.flex-row {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+    align-items: center;
+    justify-content: center;
+}
+.flex-column{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.flex-row-body{
+    display: flex;
+    flex-direction: row;
+}
+
+
+
+p {
+    margin: 0px;
+}
+
+$spacings: 5, 10, 15, 20, 25, 30, 40;
+
+@each $value in $spacings {
+    .mb-#{$value} {
+        margin-bottom: #{$value}px;
+    }
+
+    .mr-#{$value} {
+        margin-right: #{$value}px;
+    }
+
+    .mt-#{$value} {
+        margin-top: #{$value}px;
+    }
+
+    .ml-#{$value} {
+        margin-left: #{$value}px;
+    }
+
+
+}
+
+.font-semibold {
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.invoice-heading {
+    text-align: center;
+}
+.space-between{
+    justify-content: space-between;
+    display: flex;
+}
+
+$font-size: 12 , 14 ,  16 , 18;
+@each $size in $font-size {
+    .font-size-#{$size}{
+        font-size: #{$size}px;
+    }
+}
+
+$line-height: 5, 10, 15, 20, 25, 30;
+@each $height in $line-height{
+    .lh-#{$height}{
+        line-height: #{$height}px;
+    }
+} 
+
+$gap: 5, 10, 20, 30, 40;
+@each $gap in $gap{
+    .flex-gap-#{$gap}{
+        gap: #{$gap}px;
+    }
+}
+
+hr{
+    border: 0.5px solid black;
+    width: 100%;
+}
+
+@media print {
+    *{
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+}
+
+// Delete after this. it is for drink menu
+
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px 24px;
+
+
+}
+
+.menu-item {
+  min-width: 0;
+}
+
+.item-name {
+  font-weight: 600;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  margin-bottom: 4px;
+}
+
+.ingredients {
+  font-size: 14px;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  color: #666;
+  padding-left: 14px;
+  max-width: 250px;
+  font-style: italic;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.price {
+  font-weight: 600;
+  white-space: nowrap;
+font-family: Verdana, Geneva, Tahoma, sans-serif;
+
+}
+.body-color{
+    height: 100%;
+    background: #57C785;
+background: linear-gradient(90deg, rgba(87, 199, 133, 1) 15%, rgba(237, 221, 83, 1) 100%);
+}
+
