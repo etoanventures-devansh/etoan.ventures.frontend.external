@@ -272,7 +272,7 @@ p-message {
 }
 
 .payment-note {
-  font-size: 12px;
+  font-size: 12px !important;
   line-height: 1.85;
   margin-top: 30px !important;
 }
@@ -300,6 +300,9 @@ p-message {
 .signature-block {
   text-align: center;
   min-width: 235px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px
 }
 
 .signature-images {
@@ -310,9 +313,10 @@ p-message {
 }
 
 .signature-image {
-  height: 60px;
-  left: 13px;
+  height: 80px;
+  left: -15px;
   object-fit: contain;
+  background: transparent;
   position: absolute;
   top: 27px;
   width: 110px;
