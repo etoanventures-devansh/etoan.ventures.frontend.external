@@ -1,57 +1,574 @@
-<input
-  type="file"
-  accept="image/*"
-  (change)="onFileSelected($event)"
-/>
+<section class="timesheet-page" [formGroup]="form">
+  <div class="page-heading">
+    <div>
+      <p-tag value="Gemini Vision" severity="info"></p-tag>
+      <h1>Monthly Timesheet</h1>
+      <p>
+        Select a worker, project and month, upload one full-month card or two
+        half-month cards, review Gemini's extraction, then save or export the
+        finished timesheet.
+      </p>
+    </div>
 
-<button
-  type="button"
-  (click)="extractTimesheet()"
-  [disabled]="!selectedFile || isProcessing"
+    <div class="heading-actions">
+      <p-button
+        label="Load Saved"
+        icon="pi pi-cloud-download"
+        severity="secondary"
+        [outlined]="true"
+        type="button"
+        [loading]="isLoadingSaved"
+        (onClick)="loadSavedTimesheet()"
+      ></p-button>
+      <p-button
+        label="Preview PDF"
+        icon="pi pi-file-pdf"
+        severity="secondary"
+        [outlined]="true"
+        type="button"
+        (onClick)="openPdfPreview()"
+      ></p-button>
+      <p-button
+        [label]="existingRecordId ? 'Update Timesheet' : 'Save Timesheet'"
+        icon="pi pi-save"
+        type="button"
+        [loading]="isSaving"
+        (onClick)="saveTimesheet()"
+      ></p-button>
+    </div>
+  </div>
+
+  <div class="loading-card" *ngIf="isPageLoading">
+    <i class="pi pi-spin pi-spinner"></i>
+    <div>
+      <strong>Loading worker and project data</strong>
+      <span>Please wait a moment...</span>
+    </div>
+  </div>
+
+  <ng-container *ngIf="!isPageLoading">
+    <p-card styleClass="section-card">
+      <ng-template #title>Timesheet Details</ng-template>
+      <ng-template #subtitle>
+        Worker rate is stored per worker + project and automatically reused next month.
+      </ng-template>
+
+      <div class="details-grid">
+        <div class="field">
+          <label for="worker">Worker Name</label>
+          <p-select
+            inputId="worker"
+            [options]="workers"
+            optionLabel="name"
+            formControlName="worker"
+            placeholder="Select worker"
+            [filter]="true"
+            filterBy="name,identifierNumber"
+            [showClear]="true"
+            appendTo="body"
+          ></p-select>
+          <small class="field-hint" *ngIf="form.controls.worker.value?.identifierNumber">
+            FIN / NRIC: {{ form.controls.worker.value?.identifierNumber }}
+          </small>
+        </div>
+
+        <div class="field">
+          <label for="projectSite">Project Site</label>
+          <p-select
+            inputId="projectSite"
+            [options]="projectSites"
+            optionLabel="projectSiteName"
+            formControlName="projectSite"
+            placeholder="Select project site"
+            [filter]="true"
+            filterBy="projectSiteName,siteOwner"
+            [showClear]="true"
+            appendTo="body"
+          ></p-select>
+          <small class="field-hint" *ngIf="form.controls.projectSite.value?.siteOwner">
+            Client: {{ form.controls.projectSite.value?.siteOwner }}
+          </small>
+        </div>
+
+        <div class="field">
+          <label for="monthYear">Month / Year</label>
+          <p-datepicker
+            inputId="monthYear"
+            formControlName="monthYear"
+            view="month"
+            dateFormat="M yy"
+            [showIcon]="true"
+            [readonlyInput]="true"
+            appendTo="body"
+          ></p-datepicker>
+        </div>
+
+        <div class="field rate-field">
+          <label for="workerRate">Worker Rate / Hour</label>
+          <p-inputnumber
+            inputId="workerRate"
+            formControlName="workerRate"
+            mode="currency"
+            currency="SGD"
+            locale="en-SG"
+            [min]="0"
+            [minFractionDigits]="2"
+            [maxFractionDigits]="2"
+            placeholder="S$0.00"
+          ></p-inputnumber>
+
+          <div class="rate-state">
+            <span *ngIf="rateStatus === 'loading'">
+              <i class="pi pi-spin pi-spinner"></i> Checking saved rate
+            </span>
+            <span class="success" *ngIf="rateStatus === 'loaded'">
+              <i class="pi pi-check-circle"></i> Saved project rate loaded
+            </span>
+            <span class="warning" *ngIf="rateStatus === 'missing'">
+              <i class="pi pi-info-circle"></i> No saved rate - enter it once
+            </span>
+            <span class="warning" *ngIf="rateStatus === 'error'">
+              <i class="pi pi-exclamation-triangle"></i> Rate table unavailable
+            </span>
+          </div>
+        </div>
+
+        <div class="field compact-field">
+          <label for="defaultBreakHours">Default Break</label>
+          <p-inputnumber
+            inputId="defaultBreakHours"
+            formControlName="defaultBreakHours"
+            [min]="0"
+            [max]="4"
+            [step]="0.5"
+            suffix=" h"
+          ></p-inputnumber>
+          <small class="field-hint">Used only when you edit start/end times.</small>
+        </div>
+      </div>
+    </p-card>
+
+    <p-card styleClass="section-card">
+      <ng-template #title>1. Upload Timecard</ng-template>
+      <ng-template #subtitle>
+        Upload one full-month image or two half-month images. With two images,
+        the first/second-half hints are selected automatically and can still be changed.
+      </ng-template>
+
+      <div class="upload-toolbar">
+        <label
+          class="upload-button"
+          [class.disabled]="uploadedCards.length >= 2 || isProcessing"
+        >
+          <i class="pi pi-images"></i>
+          <span>
+            {{ uploadedCards.length ? 'Add Another Image' : 'Choose Timecard Image' }}
+          </span>
+          <input
+            type="file"
+            accept="image/*"
+            multiple
+            [disabled]="uploadedCards.length >= 2 || isProcessing"
+            (change)="onFilesSelected($event)"
+          />
+        </label>
+
+        <div class="upload-help">
+          <strong>{{ uploadedCards.length }}/2 images selected</strong>
+          <span>Use a clear, well-lit photo with the whole timecard visible.</span>
+        </div>
+      </div>
+
+      <div class="preview-grid" *ngIf="uploadedCards.length">
+        <article
+          class="image-preview"
+          *ngFor="let card of uploadedCards; let index = index"
+        >
+          <div class="preview-topbar">
+            <div>
+              <strong>Timecard {{ index + 1 }}</strong>
+              <small>{{ card.file.name }}</small>
+            </div>
+            <p-button
+              icon="pi pi-times"
+              severity="danger"
+              [text]="true"
+              type="button"
+              [disabled]="isProcessing"
+              (onClick)="removeCard(card)"
+            ></p-button>
+          </div>
+
+          <div class="preview-frame">
+            <img [src]="card.previewUrl" [alt]="card.file.name" />
+          </div>
+
+          <div class="period-picker">
+            <label>Card Period</label>
+            <p-select
+              [options]="periodHintOptions"
+              optionLabel="label"
+              optionValue="value"
+              [formControl]="card.periodHintControl"
+              appendTo="body"
+              [disabled]="isProcessing"
+            ></p-select>
+          </div>
+        </article>
+      </div>
+
+      <div class="gemini-action-row">
+        <div>
+          <strong>Gemini extracts</strong>
+          <span>
+            day, start/end time, basic hours, overtime, total hours, confidence and notes.
+          </span>
+        </div>
+
+        <p-button
+          label="Extract with Gemini"
+          icon="pi pi-sparkles"
+          type="button"
+          [loading]="isProcessing"
+          [disabled]="!uploadedCards.length"
+          (onClick)="runGemini()"
+        ></p-button>
+      </div>
+
+      <div class="processing-panel" *ngIf="isProcessing">
+        <i class="pi pi-spin pi-spinner processing-spinner"></i>
+        <div>
+          <strong>{{ processingStatus }}</strong>
+          <span>
+            Please keep this page open while Gemini reads the handwritten timecard.
+          </span>
+        </div>
+      </div>
+    </p-card>
+
+    <p-card styleClass="section-card extracted-card">
+      <ng-template #title>2. Review Extracted Hours</ng-template>
+      <ng-template #subtitle>
+        Every value is editable. Totals below update instantly and are used for the saved record and PDF.
+      </ng-template>
+
+      <div class="summary-grid">
+        <div class="summary-box">
+          <span>Days Worked</span>
+          <strong>{{ daysWorked }}</strong>
+        </div>
+        <div class="summary-box">
+          <span>Basic Hours</span>
+          <strong>{{ totalBasicHours | number: '1.0-2' }}</strong>
+        </div>
+        <div class="summary-box">
+          <span>OT Hours</span>
+          <strong>{{ totalOvertimeHours | number: '1.0-2' }}</strong>
+        </div>
+        <div class="summary-box primary">
+          <span>Total Hours</span>
+          <strong>{{ totalHours | number: '1.0-2' }}</strong>
+        </div>
+        <div class="summary-box amount">
+          <span>Total Amount</span>
+          <strong>{{ totalAmount | currency: 'SGD' : 'symbol-narrow' }}</strong>
+          <small>{{ totalHours | number: '1.0-2' }} h × {{ workerRate | currency: 'SGD' : 'symbol-narrow' }}</small>
+        </div>
+        <div class="summary-box" [class.review]="reviewCount > 0">
+          <span>Needs Review</span>
+          <strong>{{ reviewCount }}</strong>
+        </div>
+      </div>
+
+      <div class="table-note">
+        <i class="pi pi-info-circle"></i>
+        <span>
+          Editing start/end recalculates hours using the default break. Editing
+          Basic or OT recalculates Total. Editing Total recalculates Basic/OT.
+        </span>
+      </div>
+
+      <div class="table-quick-actions">
+        <p-button
+          label="Mark Blank Days as Off"
+          icon="pi pi-calendar-times"
+          severity="secondary"
+          [outlined]="true"
+          size="small"
+          type="button"
+          (onClick)="setBlankDaysOff()"
+        ></p-button>
+        <p-button
+          label="Clear Extracted Values"
+          icon="pi pi-eraser"
+          severity="secondary"
+          [outlined]="true"
+          size="small"
+          type="button"
+          (onClick)="clearExtractedRows()"
+        ></p-button>
+      </div>
+
+      <div class="table-wrap" formArrayName="days">
+        <p-table
+          [value]="days.controls"
+          [scrollable]="true"
+          scrollHeight="620px"
+          styleClass="p-datatable-sm"
+        >
+          <ng-template #header>
+            <tr>
+              <th class="day-col">Day</th>
+              <th>Status</th>
+              <th>Start</th>
+              <th>End</th>
+              <th>Basic</th>
+              <th>OT</th>
+              <th>Total</th>
+              <th>Confidence</th>
+              <th class="remarks-col">Remarks</th>
+            </tr>
+          </ng-template>
+
+          <ng-template #body let-row let-rowIndex="rowIndex">
+            <tr
+              [formGroupName]="rowIndex"
+              [class.review-row]="
+                row.controls.status.value === 'UNKNOWN' ||
+                (row.controls.confidence.value !== null &&
+                  row.controls.confidence.value < 0.6)
+              "
+            >
+              <td class="day-col">
+                <strong>{{ row.controls.day.value }}</strong>
+                <small>{{ row.controls.date.value | date: 'EEE' }}</small>
+              </td>
+
+              <td>
+                <p-select
+                  [options]="statusOptions"
+                  optionLabel="label"
+                  optionValue="value"
+                  formControlName="status"
+                  appendTo="body"
+                  (onChange)="onStatusChanged(rowIndex)"
+                ></p-select>
+              </td>
+
+              <td>
+                <input
+                  pInputText
+                  formControlName="startTime"
+                  placeholder="08:00"
+                  (change)="recalculateFromTimes(rowIndex)"
+                />
+              </td>
+
+              <td>
+                <input
+                  pInputText
+                  formControlName="endTime"
+                  placeholder="19:00"
+                  (change)="recalculateFromTimes(rowIndex)"
+                />
+              </td>
+
+              <td>
+                <p-inputnumber
+                  formControlName="basicHours"
+                  [min]="0"
+                  [max]="24"
+                  [step]="0.5"
+                  [maxFractionDigits]="2"
+                  (onInput)="onBasicOrOvertimeEdited(rowIndex)"
+                ></p-inputnumber>
+              </td>
+
+              <td>
+                <p-inputnumber
+                  formControlName="overtimeHours"
+                  [min]="0"
+                  [max]="24"
+                  [step]="0.5"
+                  [maxFractionDigits]="2"
+                  (onInput)="onBasicOrOvertimeEdited(rowIndex)"
+                ></p-inputnumber>
+              </td>
+
+              <td>
+                <p-inputnumber
+                  formControlName="totalHours"
+                  [min]="0"
+                  [max]="24"
+                  [step]="0.5"
+                  [maxFractionDigits]="2"
+                  (onInput)="onTotalEdited(rowIndex)"
+                ></p-inputnumber>
+              </td>
+
+              <td>
+                <p-tag
+                  [value]="confidenceLabel(row.controls.confidence.value)"
+                  [severity]="confidenceSeverity(row.controls.confidence.value)"
+                ></p-tag>
+              </td>
+
+              <td class="remarks-col">
+                <input
+                  pInputText
+                  formControlName="remarks"
+                  placeholder="Optional"
+                />
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+
+      <p-divider></p-divider>
+
+      <div class="notes-actions-row">
+        <div class="field notes-field">
+          <label for="notes">Timesheet Notes</label>
+          <input
+            id="notes"
+            pInputText
+            formControlName="notes"
+            placeholder="Optional note about this worker/month"
+          />
+        </div>
+
+        <div class="bottom-actions">
+          <p-button
+            label="Preview PDF"
+            icon="pi pi-file-pdf"
+            severity="secondary"
+            [outlined]="true"
+            type="button"
+            (onClick)="openPdfPreview()"
+          ></p-button>
+          <p-button
+            [label]="existingRecordId ? 'Update Timesheet' : 'Save Timesheet'"
+            icon="pi pi-save"
+            type="button"
+            [loading]="isSaving"
+            (onClick)="saveTimesheet()"
+          ></p-button>
+        </div>
+      </div>
+    </p-card>
+  </ng-container>
+</section>
+
+<p-dialog
+  header="Timesheet PDF Preview"
+  [(visible)]="pdfPreviewVisible"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [style]="{ width: 'min(1400px, 98vw)' }"
+  [contentStyle]="{ padding: '0', overflow: 'hidden' }"
+  appendTo="body"
 >
-  {{ isProcessing ? 'Reading Timecard...' : 'Extract Timecard' }}
-</button>
+  <div class="pdf-actions">
+    <div>
+      <strong>{{ form.controls.worker.value?.name }}</strong>
+      <span>
+        {{ form.controls.projectSite.value?.projectSiteName }} · {{ monthLabel }}
+      </span>
+    </div>
 
-<table *ngIf="timesheetEntries.length">
+    <div class="pdf-action-buttons">
+      <p-button
+        label="Open PDF"
+        icon="pi pi-external-link"
+        severity="secondary"
+        [outlined]="true"
+        [disabled]="isGeneratingPdf"
+        (onClick)="openPdf()"
+      ></p-button>
+      <p-button
+        label="Download PDF"
+        icon="pi pi-download"
+        [loading]="isGeneratingPdf"
+        (onClick)="downloadPdf()"
+      ></p-button>
+    </div>
+  </div>
 
-  <thead>
-    <tr>
-      <th>Day</th>
-      <th>Start</th>
-      <th>End</th>
-      <th>Total</th>
-      <th>Confidence</th>
-    </tr>
-  </thead>
+  <p-message
+    *ngIf="pdfActionMessage"
+    severity="success"
+    [text]="pdfActionMessage"
+  ></p-message>
+  <p-message
+    *ngIf="pdfActionError"
+    severity="error"
+    [text]="pdfActionError"
+  ></p-message>
 
-  <tbody>
+  <div class="pdf-scroll">
+    <article #timesheetDocument class="timesheet-sheet">
+      <h2>TIMESHEET {{ monthLabel | uppercase }}</h2>
 
-    <tr *ngFor="let entry of timesheetEntries">
+      <table class="excel-timesheet-table">
+        <thead>
+          <tr>
+            <th rowspan="2" class="serial">S.NO</th>
+            <th rowspan="2" class="worker-name">NAME</th>
+            <th rowspan="2" class="identifier">NRIC/FIN</th>
+            <th rowspan="2" class="project">PROJECT SITE</th>
 
-      <td>
-        {{ entry.day }}
-      </td>
+            <th *ngFor="let row of days.controls" class="day-header">
+              {{ weekdayLabel(row.controls.date.value) }}
+            </th>
 
-      <td>
-        <input [(ngModel)]="entry.startTime">
-      </td>
+            <th rowspan="2" class="total-hours">TOTAL<br />HOURS</th>
+            <th rowspan="2" class="rate">RATE($)/HOUR</th>
+            <th rowspan="2" class="amount">TOTAL AMOUNT ($)</th>
+          </tr>
 
-      <td>
-        <input [(ngModel)]="entry.endTime">
-      </td>
+          <tr>
+            <th *ngFor="let row of days.controls" class="day-number">
+              {{ row.controls.day.value }}
+            </th>
+          </tr>
+        </thead>
 
-      
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td class="left-cell">{{ form.controls.worker.value?.name | uppercase }}</td>
+            <td>{{ form.controls.worker.value?.identifierNumber }}</td>
+            <td class="left-cell">
+              {{ form.controls.projectSite.value?.projectSiteName | uppercase }}
+            </td>
 
-      <td>
-        {{ entry.totalHours }}
-      </td>
+            <td *ngFor="let row of days.controls" class="daily-hours">
+              {{ pdfDayValue(row) }}
+            </td>
 
-      <td>
-        {{ entry.confidence | percent }}
-      </td>
+            <td class="strong-cell">{{ totalHours | number: '1.0-2' }}</td>
+            <td class="strong-cell">{{ workerRate | number: '1.2-2' }}</td>
+            <td class="strong-cell">
+              SGD {{ totalAmount | number: '1.2-2' }}
+            </td>
+          </tr>
 
-    </tr>
+          <tr class="summary-row">
+            <td [attr.colspan]="days.length + 5" class="summary-label">
+              BASIC {{ totalBasicHours | number: '1.0-2' }} HRS · OT
+              {{ totalOvertimeHours | number: '1.0-2' }} HRS
+            </td>
+            <td class="summary-total">TOTAL</td>
+            <td class="summary-total">
+              SGD {{ totalAmount | number: '1.2-2' }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </article>
+  </div>
+</p-dialog>
 
-  </tbody>
-
-</table>
+<p-toast></p-toast>

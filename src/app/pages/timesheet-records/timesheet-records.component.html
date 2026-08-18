@@ -1,1 +1,326 @@
-<p>timesheet-records works!</p>
+<section class="records-page">
+  <div class="page-heading">
+    <div>
+      <p-tag value="Monthly Records" severity="info"></p-tag>
+      <h1>Timesheet Records</h1>
+      <p>
+        Review saved Gemini timesheets, billed hours, worker rates and amounts.
+        Open any record to edit it or download its PDF.
+      </p>
+    </div>
+
+    <div class="heading-actions">
+      <p-button
+        label="Refresh"
+        icon="pi pi-refresh"
+        severity="secondary"
+        [outlined]="true"
+        [loading]="isLoading"
+        (onClick)="loadRecords()"
+      ></p-button>
+      <p-button
+        label="Project PDF"
+        icon="pi pi-file-pdf"
+        severity="secondary"
+        [outlined]="true"
+        [disabled]="!canCreateProjectPdf"
+        (onClick)="openProjectPdfPreview()"
+      ></p-button>
+      <p-button
+        label="New Timesheet"
+        icon="pi pi-plus"
+        (onClick)="createNew()"
+      ></p-button>
+    </div>
+  </div>
+
+  <div class="summary-grid">
+    <p-card>
+      <span>Records</span>
+      <strong>{{ filteredRecords.length }}</strong>
+      <small>{{ records.length }} saved in total</small>
+    </p-card>
+
+    <p-card>
+      <span>Total Hours</span>
+      <strong>{{ filteredTotalHours | number: '1.0-2' }}</strong>
+      <small>Across the current filter</small>
+    </p-card>
+
+    <p-card>
+      <span>Total Amount</span>
+      <strong>{{ filteredTotalAmount | currency: 'SGD' : 'symbol-narrow' }}</strong>
+      <small>Hours × saved worker rate</small>
+    </p-card>
+
+    <p-card [class.review-card]="reviewRecordsCount > 0">
+      <span>Need Review</span>
+      <strong>{{ reviewRecordsCount }}</strong>
+      <small>Records with low-confidence / unknown rows</small>
+    </p-card>
+  </div>
+
+  <p-card styleClass="filter-card">
+    <form class="filter-grid" [formGroup]="filters">
+      <div class="field search-field">
+        <label for="search">Search</label>
+        <span class="search-box">
+          <i class="pi pi-search"></i>
+          <input
+            id="search"
+            pInputText
+            formControlName="search"
+            placeholder="Worker, FIN, project or client"
+          />
+        </span>
+      </div>
+
+      <div class="field">
+        <label for="projectFilter">Project</label>
+        <p-select
+          inputId="projectFilter"
+          [options]="projectOptions"
+          optionLabel="label"
+          optionValue="value"
+          formControlName="projectSiteId"
+          placeholder="All projects"
+          appendTo="body"
+        ></p-select>
+      </div>
+
+      <div class="field">
+        <label for="monthFilter">Month / Year</label>
+        <p-datepicker
+          inputId="monthFilter"
+          formControlName="monthYear"
+          view="month"
+          dateFormat="M yy"
+          [showIcon]="true"
+          [readonlyInput]="true"
+          appendTo="body"
+        ></p-datepicker>
+      </div>
+
+      <div class="filter-action">
+        <p-button
+          label="Clear"
+          icon="pi pi-filter-slash"
+          severity="secondary"
+          [outlined]="true"
+          type="button"
+          (onClick)="clearFilters()"
+        ></p-button>
+      </div>
+    </form>
+  </p-card>
+
+  <div class="error-banner" *ngIf="loadError">
+    <i class="pi pi-exclamation-triangle"></i>
+    <div>
+      <strong>Unable to load timesheets</strong>
+      <span>{{ loadError }}</span>
+    </div>
+  </div>
+
+  <p-card styleClass="records-card">
+    <p-table
+      [value]="filteredRecords"
+      [loading]="isLoading"
+      [paginator]="true"
+      [rows]="15"
+      [rowsPerPageOptions]="[15, 30, 50]"
+      [scrollable]="true"
+      styleClass="p-datatable-sm"
+      dataKey="id"
+    >
+      <ng-template #header>
+        <tr>
+          <th>Month</th>
+          <th>Worker</th>
+          <th>NRIC / FIN</th>
+          <th>Project</th>
+          <th>Client</th>
+          <th class="number-cell">Basic</th>
+          <th class="number-cell">OT</th>
+          <th class="number-cell">Total Hours</th>
+          <th class="number-cell">Rate</th>
+          <th class="number-cell">Amount</th>
+          <th>Status</th>
+          <th class="action-col"></th>
+        </tr>
+      </ng-template>
+
+      <ng-template #body let-record>
+        <tr>
+          <td>
+            <strong>{{ monthLabel(record) }}</strong>
+          </td>
+          <td>
+            <div class="worker-cell">
+              <strong>{{ record.employee_name }}</strong>
+              <small>{{ record.days_worked || 0 }} days worked</small>
+            </div>
+          </td>
+          <td>{{ record.identifier_number || '—' }}</td>
+          <td>{{ record.project_site_name }}</td>
+          <td>{{ record.site_owner || '—' }}</td>
+          <td class="number-cell">
+            {{ record.total_basic_hours | number: '1.0-2' }}
+          </td>
+          <td class="number-cell">
+            {{ record.total_overtime_hours | number: '1.0-2' }}
+          </td>
+          <td class="number-cell strong-number">
+            {{ record.total_hours | number: '1.0-2' }}
+          </td>
+          <td class="number-cell">
+            {{ record.worker_rate | currency: 'SGD' : 'symbol-narrow' }}
+          </td>
+          <td class="number-cell strong-number">
+            {{ record.total_amount | currency: 'SGD' : 'symbol-narrow' }}
+          </td>
+          <td>
+            <p-tag
+              [value]="statusLabel(record)"
+              [severity]="statusSeverity(record)"
+            ></p-tag>
+          </td>
+          <td class="action-col">
+            <p-button
+              label="Open"
+              icon="pi pi-arrow-right"
+              size="small"
+              [text]="true"
+              (onClick)="openRecord(record)"
+            ></p-button>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template #emptymessage>
+        <tr>
+          <td colspan="12">
+            <div class="empty-state">
+              <i class="pi pi-file"></i>
+              <strong>No timesheets found</strong>
+              <span>
+                Save a monthly timesheet first, or clear the current filters.
+              </span>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-card>
+</section>
+
+
+<p-dialog
+  header="Project Timesheet PDF"
+  [(visible)]="pdfPreviewVisible"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [style]="{ width: 'min(1450px, 98vw)' }"
+  [contentStyle]="{ padding: '0', overflow: 'hidden' }"
+  appendTo="body"
+>
+  <div class="pdf-actions">
+    <div>
+      <strong>{{ pdfProjectName }}</strong>
+      <span>
+        {{ pdfMonthLabel }} · {{ projectMonthRecords.length }} worker(s)
+      </span>
+    </div>
+
+    <div class="pdf-action-buttons">
+      <p-button
+        label="Open PDF"
+        icon="pi pi-external-link"
+        severity="secondary"
+        [outlined]="true"
+        [disabled]="isGeneratingPdf"
+        (onClick)="openProjectPdf()"
+      ></p-button>
+      <p-button
+        label="Download PDF"
+        icon="pi pi-download"
+        [loading]="isGeneratingPdf"
+        (onClick)="downloadProjectPdf()"
+      ></p-button>
+    </div>
+  </div>
+
+  <p-message
+    *ngIf="pdfActionMessage"
+    severity="success"
+    [text]="pdfActionMessage"
+  ></p-message>
+  <p-message
+    *ngIf="pdfActionError"
+    severity="error"
+    [text]="pdfActionError"
+  ></p-message>
+
+  <div class="pdf-scroll">
+    <article #projectTimesheetDocument class="timesheet-sheet">
+      <h2>TIMESHEET {{ pdfMonthLabel | uppercase }}</h2>
+
+      <table class="excel-timesheet-table">
+        <thead>
+          <tr>
+            <th rowspan="2" class="serial">S.NO</th>
+            <th rowspan="2" class="worker-name">NAME</th>
+            <th rowspan="2" class="identifier">NRIC/FIN</th>
+            <th rowspan="2" class="project">PROJECT SITE</th>
+
+            <th *ngFor="let day of pdfDays" class="day-header">
+              {{ weekdayLabel(day) }}
+            </th>
+
+            <th rowspan="2" class="total-hours">TOTAL<br />HOURS</th>
+            <th rowspan="2" class="rate">RATE($)/HOUR</th>
+            <th rowspan="2" class="amount">TOTAL AMOUNT ($)</th>
+          </tr>
+
+          <tr>
+            <th *ngFor="let day of pdfDays" class="day-number">
+              {{ day }}
+            </th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let record of projectMonthRecords; let index = index">
+            <td>{{ index + 1 }}</td>
+            <td class="left-cell">{{ record.employee_name | uppercase }}</td>
+            <td>{{ record.identifier_number }}</td>
+            <td class="left-cell">{{ record.project_site_name | uppercase }}</td>
+
+            <td *ngFor="let day of pdfDays" class="daily-hours">
+              {{ recordDayValue(record, day) }}
+            </td>
+
+            <td class="strong-cell">
+              {{ record.total_hours | number: '1.0-2' }}
+            </td>
+            <td class="strong-cell">
+              {{ record.worker_rate | number: '1.2-2' }}
+            </td>
+            <td class="strong-cell">
+              SGD {{ record.total_amount | number: '1.2-2' }}
+            </td>
+          </tr>
+
+          <tr class="summary-row">
+            <td [attr.colspan]="pdfDays.length + 5" class="summary-label"></td>
+            <td class="summary-total">TOTAL</td>
+            <td class="summary-total">
+              SGD {{ pdfTotalAmount | number: '1.2-2' }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </article>
+  </div>
+</p-dialog>

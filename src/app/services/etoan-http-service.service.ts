@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { SupabaseClientService } from './supabase-client.service';
 import { from, Observable, of } from 'rxjs';
 import { TABLE_NAMES } from '../constants/table-name';
-import { EmployeeSalaryRecords, PreviousTimecards, TimecardEntry } from '../models/etoan-models';
+import { EmployeeSalaryRecords, MonthlyWorkerTimesheet, PreviousTimecards, TimecardEntry, WorkerProjectRate } from '../models/etoan-models';
 
 @Injectable({
   providedIn: 'root',
@@ -72,4 +72,78 @@ export class EtoanHttpService {
         .insert(payload),
     );
   }
+
+  fetchWorkerProjectRate(employeeEntityId: string, projectSiteId: number) {
+    return from(
+      this.supabaseClient.client
+        .from(TABLE_NAMES.WORKER_PROJECT_RATES)
+        .select('*')
+        .eq('employee_entity_id', employeeEntityId)
+        .eq('project_site_id', projectSiteId)
+        .eq('is_active', true)
+        .maybeSingle(),
+    );
+  }
+
+  upsertWorkerProjectRate(payload: WorkerProjectRate) {
+    return from(
+      this.supabaseClient.client
+        .from(TABLE_NAMES.WORKER_PROJECT_RATES)
+        .upsert(payload, {
+          onConflict: 'employee_entity_id,project_site_id',
+        })
+        .select(),
+    );
+  }
+
+  fetchMonthlyWorkerTimesheet(
+    employeeEntityId: string,
+    projectSiteId: number,
+    year: number,
+    month: number,
+  ) {
+    return from(
+      this.supabaseClient.client
+        .from(TABLE_NAMES.MONTHLY_WORKER_TIMESHEETS)
+        .select('*')
+        .eq('employee_entity_id', employeeEntityId)
+        .eq('project_site_id', projectSiteId)
+        .eq('work_year', year)
+        .eq('work_month', month)
+        .limit(1),
+    );
+  }
+
+  fetchMonthlyWorkerTimesheetById(id: string) {
+    return from(
+      this.supabaseClient.client
+        .from(TABLE_NAMES.MONTHLY_WORKER_TIMESHEETS)
+        .select('*')
+        .eq('id', id)
+        .maybeSingle(),
+    );
+  }
+
+  fetchMonthlyWorkerTimesheets() {
+    return from(
+      this.supabaseClient.client
+        .from(TABLE_NAMES.MONTHLY_WORKER_TIMESHEETS)
+        .select('*')
+        .order('work_year', { ascending: false })
+        .order('work_month', { ascending: false })
+        .order('employee_name', { ascending: true }),
+    );
+  }
+
+  upsertMonthlyWorkerTimesheet(payload: MonthlyWorkerTimesheet) {
+    return from(
+      this.supabaseClient.client
+        .from(TABLE_NAMES.MONTHLY_WORKER_TIMESHEETS)
+        .upsert(payload, {
+          onConflict: 'employee_entity_id,project_site_id,work_year,work_month',
+        })
+        .select(),
+    );
+  }
+
 }

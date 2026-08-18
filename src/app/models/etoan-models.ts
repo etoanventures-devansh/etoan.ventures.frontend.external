@@ -121,3 +121,66 @@ export interface EmployeeSalaryRecords {
 
 
 export type API_FAILURE_TYPES = 'getEmployeeDetails' | 'getProjectSites' | 'getPreviousTimecards' | 'getEmployeeSalaryRate' | 'getEmployeeSalaryRecords'
+
+
+export type MonthlyTimesheetDayStatus = 'WORK' | 'OFF' | 'MC' | 'UNKNOWN';
+
+export interface MonthlyTimesheetDayEntry {
+  day: number;
+  date: string;
+  startTime: string | null;
+  endTime: string | null;
+  basicHours: number;
+  overtimeHours: number;
+  totalHours: number;
+  confidence: number | null;
+  remarks: string | null;
+  status: MonthlyTimesheetDayStatus;
+  sourceFileName?: string | null;
+  periodHint?: string | null;
+}
+
+export interface WorkerProjectRate {
+  id?: string;
+  employee_entity_id: string;
+  employee_name: string;
+  project_site_id: number;
+  project_site_name: string;
+  rate_per_hour: number;
+  is_active?: boolean;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface MonthlyWorkerTimesheet {
+  id?: string;
+  employee_entity_id: string;
+  employee_name: string;
+  identifier_number?: string | null;
+  project_site_id: number;
+  project_site_name: string;
+  site_owner?: string | null;
+  work_year: number;
+  work_month: number;
+  period_start: string;
+  period_end: string;
+  total_basic_hours: number;
+  total_overtime_hours: number;
+  total_hours: number;
+  days_worked: number;
+  worker_rate: number;
+  total_amount: number;
+  review_count: number;
+  gemini_model?: string | null;
+  source_count: number;
+  source_files: Array<{
+    name: string;
+    size: number;
+    periodHint: string;
+  }>;
+  daily_entries: MonthlyTimesheetDayEntry[];
+  notes?: string | null;
+  is_finalized: boolean;
+  created_at?: string;
+  updated_at?: string;
+}

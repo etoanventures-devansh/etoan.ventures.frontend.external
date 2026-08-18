@@ -64,6 +64,20 @@ export class DashboardComponent implements OnInit {
       tag: 'New',
     },
     {
+      title: 'Monthly Timesheet',
+      description: 'Extract monthly worker timecards with Gemini, review hours, rates and PDF output.',
+      route: '/timesheet-entry',
+      icon: 'pi pi-calendar',
+      tag: 'Gemini',
+    },
+    {
+      title: 'Timesheet Records',
+      description: 'Review saved monthly hours, worker rates and charge amounts.',
+      route: '/timesheet-records',
+      icon: 'pi pi-list',
+      tag: 'Monthly',
+    },
+    {
       title: 'Create Invoice',
       description: 'Generate client invoices and download them as PDF files.',
       route: '/invoice',
