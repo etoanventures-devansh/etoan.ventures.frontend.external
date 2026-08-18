@@ -1,0 +1,57 @@
+<input
+  type="file"
+  accept="image/*"
+  (change)="onFileSelected($event)"
+/>
+
+<button
+  type="button"
+  (click)="extractTimesheet()"
+  [disabled]="!selectedFile || isProcessing"
+>
+  {{ isProcessing ? 'Reading Timecard...' : 'Extract Timecard' }}
+</button>
+
+<table *ngIf="timesheetEntries.length">
+
+  <thead>
+    <tr>
+      <th>Day</th>
+      <th>Start</th>
+      <th>End</th>
+      <th>Total</th>
+      <th>Confidence</th>
+    </tr>
+  </thead>
+
+  <tbody>
+
+    <tr *ngFor="let entry of timesheetEntries">
+
+      <td>
+        {{ entry.day }}
+      </td>
+
+      <td>
+        <input [(ngModel)]="entry.startTime">
+      </td>
+
+      <td>
+        <input [(ngModel)]="entry.endTime">
+      </td>
+
+      
+
+      <td>
+        {{ entry.totalHours }}
+      </td>
+
+      <td>
+        {{ entry.confidence | percent }}
+      </td>
+
+    </tr>
+
+  </tbody>
+
+</table>

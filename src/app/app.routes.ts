@@ -7,6 +7,7 @@ import { TimecardRecordsComponent } from './pages/timecard-records/timecard-reco
 import { SalaryRecordsComponent } from './pages/salary-records/salary-records.component';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { EtoanInvoiceComponent } from './components/etoan-invoice/etoan-invoice.component';
+import { TimesheetEntryComponent } from './pages/timesheet-entry/timesheet-entry.component';
 
 export const routes: Routes = [
     {
@@ -40,5 +41,9 @@ export const routes: Routes = [
     {
         path: 'invoice',
         component: EtoanInvoiceComponent
+    },
+    {
+        path: 'timesheet-entry',
+        component: TimesheetEntryComponent
     }
 ];
