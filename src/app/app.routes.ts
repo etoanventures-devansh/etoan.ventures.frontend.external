@@ -9,11 +9,17 @@ import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { EtoanInvoiceComponent } from './components/etoan-invoice/etoan-invoice.component';
 import { TimesheetEntryComponent } from './pages/timesheet-entry/timesheet-entry.component';
 import { TimesheetRecordsComponent } from './pages/timesheet-records/timesheet-records.component';
+import { AttendanceEntryComponent } from './pages/attendance-entry/attendance-entry.component';
+import { AttendanceRecordsComponent } from './pages/attendance-records/attendance-records.component';
 
 export const routes: Routes = [
     {
         path: 'timecard-submission',
         component: TimecardEntryComponent
+    },
+    {
+        path: 'attendance-entry',
+        component: AttendanceEntryComponent
     },
     {
         path: '',
@@ -50,5 +56,9 @@ export const routes: Routes = [
     {
         path: 'timesheet-records',
         component: TimesheetRecordsComponent
+    },
+    {
+        path: 'attendance-records',
+        component: AttendanceRecordsComponent
     }
 ];

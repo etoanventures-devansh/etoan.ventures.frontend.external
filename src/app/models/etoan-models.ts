@@ -184,3 +184,10 @@ export interface MonthlyWorkerTimesheet {
   created_at?: string;
   updated_at?: string;
 }
+
+export interface EmployeeAttendance {
+  entityId?: string;
+  employeeId: string;
+  attendanceDate?: string;
+  submittedAt?: string;
+}

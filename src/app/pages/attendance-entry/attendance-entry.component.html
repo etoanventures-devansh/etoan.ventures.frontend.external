@@ -1,0 +1,82 @@
+<section class="attendance-entry-page">
+  <p-card class="attendance-card">
+    <div class="card-heading">
+      <span class="attendance-icon"><i class="pi pi-check-circle"></i></span>
+      <p class="eyebrow">Worker Attendance</p>
+      <h1>Mark today's attendance</h1>
+      <p class="date-label">{{ today | date: 'EEEE, dd MMMM yyyy' }}</p>
+    </div>
+
+    <p-message
+      *ngIf="errorMessage"
+      severity="error"
+      [text]="errorMessage"
+      icon="pi pi-times-circle"
+    ></p-message>
+
+    <div class="entry-form">
+      <label for="employee">Select your name</label>
+      <p-select
+        inputId="employee"
+        [options]="employees"
+        optionLabel="name"
+        optionValue="entityId"
+        placeholder="Choose your name"
+        [filter]="true"
+        filterBy="name"
+        [loading]="loadingEmployees"
+        [(ngModel)]="selectedEmployeeId"
+        (ngModelChange)="onEmployeeChanged()"
+        appendTo="body"
+      >
+        <ng-template #selectedItem let-employee>
+          <div class="employee-option" *ngIf="employee">
+            <strong>{{ employee.name }}</strong>
+          </div>
+        </ng-template>
+
+        <ng-template #item let-employee>
+          <div class="employee-option">
+            <strong>{{ employee.name }}</strong>
+          </div>
+        </ng-template>
+      </p-select>
+
+      <div class="selected-worker" *ngIf="selectedEmployee && !alreadySubmitted">
+        <span class="avatar">{{ selectedEmployee.name?.charAt(0) }}</span>
+        <div>
+          <small>You are marking attendance for</small>
+          <strong>{{ selectedEmployee.name }}</strong>
+        </div>
+      </div>
+
+      <p-message
+        *ngIf="alreadySubmitted"
+        severity="success"
+        icon="pi pi-check-circle"
+      >
+        <div class="submitted-message">
+          <strong>Attendance already recorded for today.</strong>
+          <span *ngIf="submittedAt">Submitted at {{ submittedAt | date: 'hh:mm a' }}</span>
+        </div>
+      </p-message>
+
+      <p-button
+        label="Mark Attendance"
+        icon="pi pi-check"
+        size="large"
+        styleClass="submit-button"
+        [loading]="submitting || checkingAttendance"
+        [disabled]="!selectedEmployeeId || alreadySubmitted || checkingAttendance"
+        (onClick)="submitAttendance()"
+      ></p-button>
+
+      <a class="back-link" routerLink="/">
+        <i class="pi pi-arrow-left"></i>
+        Back to home
+      </a>
+    </div>
+  </p-card>
+
+  <p-toast position="top-center"></p-toast>
+</section>

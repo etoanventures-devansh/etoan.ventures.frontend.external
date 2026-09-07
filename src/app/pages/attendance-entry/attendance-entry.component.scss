@@ -1,0 +1,137 @@
+.attendance-entry-page {
+  display: flex;
+  justify-content: center;
+  padding: 1.5rem 1rem 3rem;
+}
+
+.attendance-card {
+  width: min(520px, 100%);
+}
+
+:host ::ng-deep .attendance-card .p-card-body {
+  padding: 2rem;
+}
+
+.card-heading {
+  text-align: center;
+  margin-bottom: 1.75rem;
+
+  h1 {
+    margin: 0.35rem 0 0.4rem;
+    font-size: 1.75rem;
+  }
+}
+
+.attendance-icon {
+  align-items: center;
+  background: var(--p-primary-50);
+  border-radius: 50%;
+  color: var(--p-primary-600);
+  display: inline-flex;
+  font-size: 1.75rem;
+  height: 4rem;
+  justify-content: center;
+  margin-bottom: 0.8rem;
+  width: 4rem;
+}
+
+.eyebrow {
+  color: var(--p-primary-600);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.date-label {
+  color: var(--p-text-muted-color);
+  margin: 0;
+}
+
+.entry-form {
+  display: grid;
+  gap: 1rem;
+
+  label {
+    font-weight: 600;
+  }
+}
+
+:host ::ng-deep .entry-form .p-select,
+:host ::ng-deep .submit-button {
+  width: 100%;
+}
+
+.employee-option {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+
+  small {
+    color: var(--p-text-muted-color);
+  }
+}
+
+.selected-worker {
+  align-items: center;
+  background: var(--p-surface-50);
+  border: 1px solid var(--p-surface-200);
+  border-radius: 0.85rem;
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.85rem;
+
+  small,
+  strong {
+    display: block;
+  }
+
+  small {
+    color: var(--p-text-muted-color);
+    margin-bottom: 0.15rem;
+  }
+}
+
+.avatar {
+  align-items: center;
+  background: var(--p-primary-100);
+  border-radius: 50%;
+  color: var(--p-primary-700);
+  display: inline-flex;
+  flex: 0 0 2.5rem;
+  font-weight: 700;
+  height: 2.5rem;
+  justify-content: center;
+  width: 2.5rem;
+}
+
+.submitted-message {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.back-link {
+  align-items: center;
+  color: var(--p-text-muted-color);
+  display: inline-flex;
+  gap: 0.4rem;
+  justify-content: center;
+  margin-top: 0.25rem;
+  text-decoration: none;
+
+  &:hover {
+    color: var(--p-primary-color);
+  }
+}
+
+@media (max-width: 560px) {
+  .attendance-entry-page {
+    padding: 0.75rem 0.5rem 2rem;
+  }
+
+  :host ::ng-deep .attendance-card .p-card-body {
+    padding: 1.25rem;
+  }
+}

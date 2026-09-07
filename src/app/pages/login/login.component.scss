@@ -40,4 +40,24 @@
   align-items: center;
   display: flex;
   gap: 20px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 650px) {
+  .login-container {
+    height: auto;
+    padding: 2rem 0.5rem;
+  }
+
+  .login-card {
+    padding: 1rem;
+  }
+
+  .or-btn-container {
+    flex-direction: column;
+
+    p-button {
+      width: 100%;
+    }
+  }
 }

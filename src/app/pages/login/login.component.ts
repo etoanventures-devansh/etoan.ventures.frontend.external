@@ -26,4 +26,8 @@ export class LoginComponent {
     this.router.navigate(['view-timecard'])
   }
 
+  onAttendanceClicked(){
+    this.router.navigate(['attendance-entry'])
+  }
+
 }

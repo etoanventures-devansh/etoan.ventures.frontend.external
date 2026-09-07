@@ -50,6 +50,13 @@ export class DashboardComponent implements OnInit {
       tag: 'Records',
     },
     {
+      title: 'Attendance',
+      description: 'View daily worker attendance submissions and missing entries.',
+      route: '/attendance-records',
+      icon: 'pi pi-check-square',
+      tag: 'Attendance',
+    },
+    {
       title: 'Salary Entry',
       description: 'Generate salary from worker rates, days, OT, and deductions.',
       route: '/salary-entry',

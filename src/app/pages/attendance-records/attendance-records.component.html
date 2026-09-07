@@ -1,0 +1,132 @@
+<section class="attendance-records-page">
+  <div class="page-header">
+    <div>
+      <h2>Attendance</h2>
+      <p>View which active workers submitted attendance for a selected day.</p>
+    </div>
+
+    <p-button
+      label="Refresh"
+      icon="pi pi-refresh"
+      severity="secondary"
+      outlined
+      (onClick)="loadAttendance()"
+    ></p-button>
+  </div>
+
+  <div class="summary-grid">
+    <p-card>
+      <small>Active Workers</small>
+      <strong>{{ rows.length }}</strong>
+    </p-card>
+
+    <p-card>
+      <small>Present</small>
+      <strong>{{ presentCount }}</strong>
+    </p-card>
+
+    <p-card>
+      <small>Not Submitted</small>
+      <strong>{{ notSubmittedCount }}</strong>
+    </p-card>
+
+    <p-card>
+      <small>Attendance Rate</small>
+      <strong>{{ attendanceRate }}%</strong>
+    </p-card>
+  </div>
+
+  <p-card class="filter-card">
+    <div class="filters-row">
+      <p-datepicker
+        [(ngModel)]="selectedDate"
+        [showIcon]="true"
+        [readonlyInput]="true"
+        dateFormat="dd M yy"
+        (ngModelChange)="onDateChanged()"
+      ></p-datepicker>
+
+      <span class="p-input-icon-left search-field">
+        <i class="pi pi-search"></i>
+        <input
+          pInputText
+          type="text"
+          placeholder="Search worker, FIN/NRIC, or designation..."
+          [(ngModel)]="searchText"
+          (ngModelChange)="applyFilters()"
+        />
+      </span>
+    </div>
+  </p-card>
+
+  <p-message
+    *ngIf="errorMessage"
+    severity="error"
+    [text]="errorMessage"
+    icon="pi pi-times-circle"
+  ></p-message>
+
+  <p-card class="table-card">
+    <p-table
+      [value]="filteredRows"
+      [loading]="loading"
+      [paginator]="true"
+      [rows]="15"
+      [rowsPerPageOptions]="[15, 25, 50]"
+      responsiveLayout="scroll"
+      styleClass="p-datatable-sm"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Worker</th>
+          <th>FIN/NRIC</th>
+          <th>Designation</th>
+          <th>Status</th>
+          <th>Submitted At</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-row>
+        <tr>
+          <td>
+            <div class="worker-cell">
+              <span class="avatar">{{ row.employee.name?.charAt(0) }}</span>
+              <strong>{{ row.employee.name }}</strong>
+            </div>
+          </td>
+          <td>{{ maskIdentifier(row.employee.identifierNumber) }}</td>
+          <td>{{ row.employee.designation || '-' }}</td>
+          <td>
+            <p-tag
+              *ngIf="row.attendance; else notSubmitted"
+              value=""
+              severity="success"
+              icon="pi pi-check"
+            ></p-tag>
+            <ng-template #notSubmitted>
+              <p-tag value="" severity="danger" icon="pi pi-minus"></p-tag>
+            </ng-template>
+          </td>
+          <td>
+            <span *ngIf="row.attendance?.submittedAt; else noTime">
+              {{ row.attendance.submittedAt | date: 'hh:mm a' }}
+            </span>
+            <ng-template #noTime>-</ng-template>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="5">
+            <div class="empty-state">
+              <i class="pi pi-users"></i>
+              <h3>No workers found</h3>
+              <p>Try changing the search or refresh the page.</p>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-card>
+</section>

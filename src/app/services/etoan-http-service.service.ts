@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { SupabaseClientService } from './supabase-client.service';
 import { from, Observable, of } from 'rxjs';
 import { TABLE_NAMES } from '../constants/table-name';
-import { EmployeeSalaryRecords, MonthlyWorkerTimesheet, PreviousTimecards, TimecardEntry, WorkerProjectRate } from '../models/etoan-models';
+import { EmployeeAttendance, EmployeeSalaryRecords, MonthlyWorkerTimesheet, PreviousTimecards, TimecardEntry, WorkerProjectRate } from '../models/etoan-models';
 
 @Injectable({
   providedIn: 'root',
@@ -13,6 +13,22 @@ export class EtoanHttpService {
   fetchEmployeeDetails(): Observable<any> {
     return from(
       this.supabaseClient.client.from(TABLE_NAMES.EMPLOYEE_DETAILS).select('*'),
+    );
+  }
+
+  fetchAttendanceEntryEmployees(): Observable<any> {
+    return from(
+      this.supabaseClient.client
+        .from(TABLE_NAMES.EMPLOYEE_DETAILS)
+        .select('entityId,name,status'),
+    );
+  }
+
+  fetchAttendanceViewEmployees(): Observable<any> {
+    return from(
+      this.supabaseClient.client
+        .from(TABLE_NAMES.EMPLOYEE_DETAILS)
+        .select('entityId,name,identifierNumber,designation,status'),
     );
   }
   fetchProjectSites(): Observable<any> {
@@ -46,6 +62,38 @@ export class EtoanHttpService {
         .select('*')
         .order('date', { ascending: false })
         .order('employeeName', { ascending: true }),
+    );
+  }
+
+  fetchEmployeeAttendance(employeeId: string, attendanceDate: string) {
+    return from(
+      this.supabaseClient.client
+        .from(TABLE_NAMES.EMPLOYEE_ATTENDANCE)
+        .select('*')
+        .eq('employeeId', employeeId)
+        .eq('attendanceDate', attendanceDate)
+        .limit(1),
+    );
+  }
+
+  fetchAttendanceByDate(attendanceDate: string) {
+    return from(
+      this.supabaseClient.client
+        .from(TABLE_NAMES.EMPLOYEE_ATTENDANCE)
+        .select('*')
+        .eq('attendanceDate', attendanceDate)
+        .order('submittedAt', { ascending: true }),
+    );
+  }
+
+  postEmployeeAttendance(employeeId: string) {
+    const payload: EmployeeAttendance = { employeeId };
+
+    return from(
+      this.supabaseClient.client
+        .from(TABLE_NAMES.EMPLOYEE_ATTENDANCE)
+        .insert(payload)
+        .select(),
     );
   }
 
